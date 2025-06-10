@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8" />
+<title>Minesweeper (Maynsviper)</title>
+<style>
+  body {
+    background: #222;
+    color: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    padding: 20px;
+  }
+  h1 {
+    margin-bottom: 10px;
+  }
+  #game {
+    display: grid;
+    grid-template-columns: repeat(10, 40px);
+    grid-template-rows: repeat(10, 40px);
+    gap: 2px;
+  }
+  .cell {
+    width: 40px;
+    height: 40px;
+    background: #555;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 20px;
+    user-select: none;
+  }
+  .cell.revealed {
+    background: #ddd;
+    color: black;
+    cursor: default;
+  }
+  .cell.mine {
+    background: red;
+  }
+  .cell.flagged {
+    background: #ffa;
+    color: red;
+  }
+  #info {
+    margin: 10px 0;
+    font-size: 18px;
+  }
+  button {
+    padding: 8px 15px;
+    font-size: 16px;
+    margin-top: 15px;
+    cursor: pointer;
+    border-radius: 6px;
+    border: none;
+    background-color: #28a745;
+    color: white;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<h1>Minesweeper</h1>
+<div id="info">Minalarni toping! 🚩-flag qo‘yish uchun o‘ng tugma</div>
+<div id="game"></div>
+<button onclick="resetGame()">Qayta boshlash</button>
+
+<script>
+  const ROWS = 10;
+  const COLS = 10;
+  const MINES_COUNT = 15;
+
+  const gameElem = document.getElementById('game');
+  let grid = [];
+  let revealedCount = 0;
+  let flagsCount = 0;
+  let gameOver = false;
+
+  // Har bir katak obyekti yaratish
+  function createCell(row, col) {
+    const cell = document.createElement('div');
+    cell.classList.add('cell');
+    cell.dataset.row = row;
+    cell.dataset.col = col;
+    cell.addEventListener('click', () => revealCell(row, col));
+    cell.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      toggleFlag(row, col);
+    });
+    return cell;
+  }
+
+  // O'yin maydonini yaratish
+  function createGrid() {
+    grid = [];
+    gameElem.innerHTML = '';
+    gameElem.style.gridTemplateColumns = `repeat(${COLS}, 40px)`;
+    gameElem.style.gridTemplateRows = `repeat(${ROWS}, 40px)`;
+    revealedCount = 0;
+    flagsCount = 0;
+    gameOver = false;
+
+    for(let r = 0; r < ROWS; r++) {
+      grid[r] = [];
+      for(let c = 0; c < COLS; c++) {
+        const cellObj = {
+          mine: false,
+          revealed: false,
+          flagged: false,
+          neighborMines: 0,
+          element: createCell(r,c)
+        };
+        grid[r][c] = cellObj;
+        gameElem.appendChild(cellObj.element);
+      }
+    }
+  }
+
+  // Mina joylash
+  function placeMines() {
+    let placed = 0;
+    while(placed < MINES_COUNT) {
+      const r = Math.floor(Math.random() * ROWS);
+      const c = Math.floor(Math.random() * COLS);
+      if(!grid[r][c].mine) {
+        grid[r][c].mine = true;
+        placed++;
+      }
+    }
+  }
+
+  // Qo'shni minalar sonini hisoblash
+  function calculateNeighborMines() {
+    for(let r=0; r<ROWS; r++) {
+      for(let c=0; c<COLS; c++) {
+        if(grid[r][c].mine) {
+          grid[r][c].neighborMines = -1;
+          continue;
+        }
+        let count = 0;
+        for(let dr = -1; dr <= 1; dr++) {
+          for(let dc = -1; dc <= 1; dc++) {
+            if(dr === 0 && dc === 0) continue;
+            const nr = r + dr;
+            const nc = c + dc;
+            if(nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS) {
+              if(grid[nr][nc].mine) count++;
+            }
+          }
+        }
+        grid[r][c].neighborMines = count;
+      }
+    }
+  }
+
+  // Katakni ochish
+  function revealCell(row, col) {
+    if(gameOver) return;
+
+    const cell = grid[row][col];
+    if(cell.revealed || cell.flagged) return;
+
+    cell.revealed = true;
+    revealedCount++;
+    cell.element.classList.add('revealed');
+
+    if(cell.mine) {
+      cell.element.classList.add('mine');
+      endGame(false);
+      return;
+    }
+
+    if(cell.neighborMines > 0) {
+      cell.element.textContent = cell.neighborMines;
+      cell.element.style.color = getNumberColor(cell.neighborMines);
+    } else {
+      // Atrofdagi bo‘sh kataklarni ham ochish (rekursiya)
+      for(let dr = -1; dr <= 1; dr++) {
+        for(let dc = -1; dc <= 1; dc++) {
+          const nr = row + dr;
+          const nc = col + dc;
+          if(nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS) {
+            if(!grid[nr][nc].revealed) {
+              revealCell(nr, nc);
+            }
+          }
+        }
+      }
+    }
+
+    checkWin();
+  }
+
+  // Ranglarni berish raqamga qarab
+  function getNumberColor(num) {
+    switch(num) {
+      case 1: return '#1976d2';
+      case 2: return '#388e3c';
+      case 3: return '#d32f2f';
+      case 4: return '#7b1fa2';
+      case 5: return '#f57c00';
+      case 6: return '#0097a7';
+      case 7: return '#616161';
+      case 8: return '#212121';
+      default: return 'black';
+    }
+  }
+
+  // Bayroq qo‘yish / olib tashlash
+  function toggleFlag(row, col) {
+    if(gameOver) return;
+    const cell = grid[row][col];
+    if(cell.revealed) return;
+
+    if(cell.flagged) {
+      cell.flagged = false;
+      cell.element.classList.remove('flagged');
+      cell.element.textContent = '';
+      flagsCount--;
+    } else {
+      cell.flagged = true;
+      cell.element.classList.add('flagged');
+      cell.element.textContent = '🚩';
+      flagsCount++;
+    }
+  }
+
+  // O'yin tugadi
+  function endGame(win) {
+    gameOver = true;
+    if(win) {
+      alert("Tabriklaymiz! Siz g‘alaba qildingiz! 🎉");
+    } else {
+      alert("O'yin tugadi! Mina portladi 💥");
+      // Hammasini ochish
+      for(let r=0; r<ROWS; r++) {
+        for(let c=0; c<COLS; c++) {
+          if(grid[r][c].mine) {
+            grid[r][c].element.classList.add('mine');
+            grid[r][c].element.textContent = '💣';
+            grid[r][c].element.classList.add('revealed');
+          }
+        }
+      }
+    }
+  }
+
+  // G'alaba tekshirish
+  function checkWin() {
+    if(revealedCount === ROWS * COLS - MINES_COUNT) {
+      endGame(true);
+    }
+  }
+
+  function resetGame() {
+    createGrid();
+    placeMines();
+    calculateNeighborMines();
+  }
+
+  resetGame();
+</script>
+
+</body>
+</html>

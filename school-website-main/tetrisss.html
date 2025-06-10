@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tetris O‘yini</title>
+  <script>
+    // Ctrl+U bloklash
+    document.addEventListener('keydown', function (e) {
+      if (e.ctrlKey && e.key.toLowerCase() === 'u') {
+        e.preventDefault();
+        alert("Bu amal taqiqlangan!");
+      }
+  
+      // F12 (DevTools) bloklash
+      if (e.key === "F12") {
+        e.preventDefault();
+        alert("Bu amal taqiqlangan!");
+      }
+  
+      // Ctrl+Shift+I (Inspect)
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') {
+        e.preventDefault();
+        alert("Bu amal taqiqlangan!");
+      }
+  
+      // Ctrl+Shift+C (Element tanlash)
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'c') {
+        e.preventDefault();
+        alert("Bu amal taqiqlangan!");
+      }
+  
+      // Ctrl+Shift+J (DevTools Console)
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'j') {
+        e.preventDefault();
+        alert("Bu amal taqiqlangan!");
+      }
+    });
+  
+    // O'ng tugmani bloklash
+    document.addEventListener('contextmenu', function (e) {
+      e.preventDefault();
+      alert("O'ng tugma ishlatilmaydi!");
+    });
+  </script>
+  
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0; padding: 0;
+      user-select: none;
+    }
+    h1 {
+      margin: 20px 0;
+    }
+    canvas {
+      border: 3px solid #0ff;
+      background: #000;
+      display: block;
+      margin: 0 auto;
+    }
+    .buttons {
+      margin: 15px 0;
+    }
+    button {
+      background: #0a9;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      margin: 0 5px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #0cf;
+    }
+    #score {
+      font-size: 18px;
+      margin-top: 10px;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧩 Tetris O‘yini</h1>
+  <canvas id="tetris" width="300" height="600"></canvas>
+  <div class="buttons">
+    <button onclick="startGame()">▶ Start</button>
+    <button onclick="pauseGame()">⏸ Pause</button>
+    <button onclick="dropPiece()">⬇ Drop</button>
+  </div>
+  <div id="score">Hisob: 0</div>
+
+  <script>
+    const canvas = document.getElementById('tetris');
+    const ctx = canvas.getContext('2d');
+    const ROWS = 20;
+    const COLS = 10;
+    const BLOCK_SIZE = 30;
+    ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
+
+    const colors = [
+      null,
+      '#FF0D72', // I
+      '#0DC2FF', // J
+      '#0DFF72', // L
+      '#F538FF', // O
+      '#FF8E0D', // S
+      '#FFE138', // T
+      '#3877FF'  // Z
+    ];
+
+    const tetrominoes = {
+      'I': [
+        [
+          [0,0,0,0],
+          [1,1,1,1],
+          [0,0,0,0],
+          [0,0,0,0]
+        ],
+        [
+          [0,0,1,0],
+          [0,0,1,0],
+          [0,0,1,0],
+          [0,0,1,0]
+        ]
+      ],
+      'J': [
+        [
+          [2,0,0],
+          [2,2,2],
+          [0,0,0]
+        ],
+        [
+          [0,2,2],
+          [0,2,0],
+          [0,2,0]
+        ],
+        [
+          [0,0,0],
+          [2,2,2],
+          [0,0,2]
+        ],
+        [
+          [0,2,0],
+          [0,2,0],
+          [2,2,0]
+        ]
+      ],
+      'L': [
+        [
+          [0,0,3],
+          [3,3,3],
+          [0,0,0]
+        ],
+        [
+          [0,3,0],
+          [0,3,0],
+          [0,3,3]
+        ],
+        [
+          [0,0,0],
+          [3,3,3],
+          [3,0,0]
+        ],
+        [
+          [3,3,0],
+          [0,3,0],
+          [0,3,0]
+        ]
+      ],
+      'O': [
+        [
+          [4,4],
+          [4,4]
+        ]
+      ],
+      'S': [
+        [
+          [0,5,5],
+          [5,5,0],
+          [0,0,0]
+        ],
+        [
+          [0,5,0],
+          [0,5,5],
+          [0,0,5]
+        ]
+      ],
+      'T': [
+        [
+          [0,6,0],
+          [6,6,6],
+          [0,0,0]
+        ],
+        [
+          [0,6,0],
+          [0,6,6],
+          [0,6,0]
+        ],
+        [
+          [0,0,0],
+          [6,6,6],
+          [0,6,0]
+        ],
+        [
+          [0,6,0],
+          [6,6,0],
+          [0,6,0]
+        ]
+      ],
+      'Z': [
+        [
+          [7,7,0],
+          [0,7,7],
+          [0,0,0]
+        ],
+        [
+          [0,0,7],
+          [0,7,7],
+          [0,7,0]
+        ]
+      ]
+    };
+
+    function createMatrix(w, h) {
+      const matrix = [];
+      while(h--) {
+        matrix.push(new Array(w).fill(0));
+      }
+      return matrix;
+    }
+
+    const arena = createMatrix(COLS, ROWS);
+
+    function collide(arena, player) {
+      const [m, o] = [player.matrix, player.pos];
+      for(let y = 0; y < m.length; ++y){
+        for(let x = 0; x < m[y].length; ++x){
+          if(m[y][x] !== 0 &&
+             (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0){
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    function merge(arena, player) {
+      const [m, o] = [player.matrix, player.pos];
+      for(let y = 0; y < m.length; ++y){
+        for(let x = 0; x < m[y].length; ++x){
+          if(m[y][x] !== 0){
+            arena[y + o.y][x + o.x] = m[y][x];
+          }
+        }
+      }
+    }
+
+    function rotate(matrix, dir) {
+      for(let y = 0; y < matrix.length; ++y){
+        for(let x = 0; x < y; ++x){
+          [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
+        }
+      }
+      if(dir > 0){
+        matrix.forEach(row => row.reverse());
+      } else {
+        matrix.reverse();
+      }
+    }
+
+    function drawMatrix(matrix, offset) {
+      for(let y = 0; y < matrix.length; ++y){
+        for(let x = 0; x < matrix[y].length; ++x){
+          if(matrix[y][x] !== 0){
+            ctx.fillStyle = colors[matrix[y][x]];
+            ctx.fillRect(x + offset.x, y + offset.y, 1, 1);
+            ctx.strokeStyle = "#222";
+            ctx.lineWidth = 0.05;
+            ctx.strokeRect(x + offset.x, y + offset.y, 1, 1);
+          }
+        }
+      }
+    }
+
+    function draw() {
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, COLS, ROWS);
+      drawMatrix(arena, {x: 0, y: 0});
+      drawMatrix(player.matrix, player.pos);
+    }
+
+    function sweep() {
+      let rowCount = 0;
+      outer: for(let y = arena.length - 1; y >= 0; --y){
+        for(let x = 0; x < arena[y].length; ++x){
+          if(arena[y][x] === 0){
+            continue outer;
+          }
+        }
+        const row = arena.splice(y, 1)[0].fill(0);
+        arena.unshift(row);
+        rowCount++;
+        y++;
+      }
+      if(rowCount > 0){
+        player.score += rowCount * 10;
+        updateScore();
+      }
+    }
+
+    function updateScore() {
+      document.getElementById('score').innerText = 'Hisob: ' + player.score;
+    }
+
+    const player = {
+      pos: {x: 0, y: 0},
+      matrix: null,
+      rotationIndex: 0,
+      type: null,
+      score: 0
+    };
+
+    function playerReset() {
+      const pieces = 'TJLOSZI';
+      player.type = pieces[Math.floor(Math.random() * pieces.length)];
+      player.rotationIndex = 0;
+      player.matrix = tetrominoes[player.type][player.rotationIndex];
+      player.pos.y = 0;
+      player.pos.x = Math.floor((COLS - player.matrix[0].length) / 2);
+      if(collide(arena, player)){
+        arena.forEach(row => row.fill(0));
+        player.score = 0;
+        updateScore();
+      }
+    }
+
+    let dropCounter = 0;
+    let dropInterval = 1000; // 1 soniya
+    let lastTime = 0;
+    let paused = false;
+    let animationFrameId = null;
+
+    function drop() {
+      player.pos.y++;
+      if(collide(arena, player)){
+        player.pos.y--;
+        merge(arena, player);
+        sweep();
+        playerReset();
+      }
+      dropCounter = 0;
+    }
+
+    function update(time = 0) {
+      if(paused){
+        animationFrameId = requestAnimationFrame(update);
+        return;
+      }
+      const deltaTime = time - lastTime;
+      lastTime = time;
+
+      dropCounter += deltaTime;
+      if(dropCounter > dropInterval){
+        drop();
+      }
+      draw();
+      animationFrameId = requestAnimationFrame(update);
+    }
+
+    function startGame() {
+      if(animationFrameId){
+        cancelAnimationFrame(animationFrameId);
+      }
+      playerReset();
+      player.score = 0;
+      updateScore();
+      paused = false;
+      lastTime = 0;
+      dropCounter = 0;
+      update();
+    }
+
+    function pauseGame() {
+      paused = !paused;
+    }
+
+    function dropPiece() {
+      while(!collide(arena, player)){
+        player.pos.y++;
+      }
+      player.pos.y--;
+      merge(arena, player);
+      sweep();
+      playerReset();
+    }
+
+    // Klaviatura boshqaruvi
+    document.addEventListener('keydown', event => {
+      if(paused) return;
+
+      if(event.key === 'ArrowLeft'){
+        player.pos.x--;
+        if(collide(arena, player)){
+          player.pos.x++;
+        }
+      } else if(event.key === 'ArrowRight'){
+        player.pos.x++;
+        if(collide(arena, player)){
+          player.pos.x--;
+        }
+      } else if(event.key === 'ArrowDown'){
+        drop();
+      } else if(event.key === 'ArrowUp'){
+        const prevRotation = player.rotationIndex;
+        player.rotationIndex = (player.rotationIndex + 1) % tetrominoes[player.type].length;
+        player.matrix = tetrominoes[player.type][player.rotationIndex];
+        if(collide(arena, player)){
+          player.rotationIndex = prevRotation;
+          player.matrix = tetrominoes[player.type][player.rotationIndex];
+        }
+      }
+    });
+
+    
+  </script>
+</body>
+</html>

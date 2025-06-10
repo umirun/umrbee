@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/Signup Form</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script>
+        // Ctrl+U bloklash
+        document.addEventListener('keydown', function (e) {
+          if (e.ctrlKey && e.key.toLowerCase() === 'u') {
+            e.preventDefault();
+            alert("Bu amal taqiqlangan!");
+          }
+      
+          // F12 (DevTools) bloklash
+          if (e.key === "F12") {
+            e.preventDefault();
+            alert("Bu amal taqiqlangan!");
+          }
+      
+          // Ctrl+Shift+I (Inspect)
+          if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') {
+            e.preventDefault();
+            alert("Bu amal taqiqlangan!");
+          }
+      
+          // Ctrl+Shift+C (Element tanlash)
+          if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'c') {
+            e.preventDefault();
+            alert("Bu amal taqiqlangan!");
+          }
+      
+          // Ctrl+Shift+J (DevTools Console)
+          if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'j') {
+            e.preventDefault();
+            alert("Bu amal taqiqlangan!");
+          }
+        });
+      
+        // O'ng tugmani bloklash
+        document.addEventListener('contextmenu', function (e) {
+          e.preventDefault();
+          alert("O'ng tugma ishlatilmaydi!");
+        });
+      </script>
+      
+</head>
+<body>
+    <div class="container">
+        <div class="form-box login">
+            <form action="#">
+                <h1>Login</h1>
+                <div class="input-box">
+                    <input type="text" placeholder="Ismingiz" required>
+                    <i class='bx bxs-user'></i>
+                </div>
+                <div class="input-box">
+                    <input type="password" placeholder="Parolingiz" required>
+                    <i class='bx bxs-lock-alt' ></i>
+                </div>
+                <div class="forgot-link">
+                    <a href="#">Parolni unutdizmi</a>
+                </div>
+                <button onclick="window.location.href='../kirish/kirish.html'" type="button" class="btn">
+                    O'tish
+                </button>  
+                <p>boshqa saytlar orqali o'tish</p>
+                <div class="social-icons">
+                    <a href="#"><i class='bx bxl-google' ></i></a>
+                    <a href="#"><i class='bx bxl-facebook' ></i></a>
+                    <a href="#"><i class='bx bxl-github' ></i></a>
+                    <a href="#"><i class='bx bxl-linkedin' ></i></a>
+                </div>
+            </form>
+        </div>
+
+        <div class="form-box register">
+            <form action="#">
+                <h1>register</h1>
+                <div class="input-box">
+                    <input type="text" placeholder="Username" required>
+                    <i class='bx bxs-user'></i>
+                </div>
+                <div class="input-box">
+                    <input type="email" placeholder="Email" required>
+                    <i class='bx bxs-envelope' ></i>
+                </div>
+                <div class="input-box">
+                    <input type="password" placeholder="Password" required>
+                    <i class='bx bxs-lock-alt' ></i>
+                </div>
+                <button onclick="window.location.href='../kirish/kirish.html'" type="button" class="btn">
+                    Ro'yhatdan O‘tish
+                </button>                
+                <p>Boshqa Saytlar Orqali Otish</p>
+                <div class="social-icons">
+                    <a href="#"><i class='bx bxl-google' ></i></a>
+                    <a href="#"><i class='bx bxl-facebook' ></i></a>
+                    <a href="#"><i class='bx bxl-github' ></i></a>
+                    <a href="#"><i class='bx bxl-linkedin' ></i></a>
+                </div>
+            </form>
+        </div>
+
+        <div class="toggle-box">
+            <div class="toggle-panel toggle-left">
+                <h1>Salom,Hush Kelibsiz!</h1>
+                <p>Sizda Akkaunt Bormi?</p>
+                <button class="btn register-btn">Ro'yhatdan O'tish</button>
+            </div>
+
+            <div class="toggle-panel toggle-right">
+                <h1>Assalomu Aleykun</h1>
+                <p>Sizda Akkaunt Yoqmi?</p>
+                <button class="btn login-btn">Login</button>
+            </div>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>

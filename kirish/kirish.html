@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RUNSTAX O‘yinlar</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body, html {
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    .video-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+      object-fit: cover;
+      filter: brightness(0.4);
+    }
+
+    body {
+      color: #fff;
+      min-height: 100vh;
+      padding: 30px 15px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-size: 3em;
+      font-weight: bold;
+      color: #ffdd00;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 25px;
+    }
+
+    .card {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      width: 270px;
+      padding: 20px;
+      text-align: center;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .card img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      margin-bottom: 15px;
+    }
+
+    .card h2 {
+      font-size: 20px;
+      margin-bottom: 12px;
+      color: #ffdd00;
+    }
+
+    .card a {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #ffdd00;
+      color: #000;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .card a:hover {
+      background-color: #fff200;
+    }
+    .card img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 50%; /* ✅ Dumaloq qilish */
+        margin-bottom: 15px;
+      }
+    @media (max-width: 768px) {
+      .card {
+        width: 90%;
+      }
+    }
+    .icon {
+      position: absolute;
+      font-size: 2rem;
+      color: #ffdd00;
+      animation: fall 4s linear forwards;
+      z-index: 1000;
+    }
+    
+    @keyframes fall {
+      0% { transform: translateY(0px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+    
+  </style>
+</head>
+<body onclick="dropIcons(this)">
+  <!-- Video Background -->
+  <video autoplay muted loop class="video-bg">
+    <source src="back.mp4" type="video/mp4">
+  </video>
+
+  <header>
+    <h1>UMIRBEE Ga Hush Kelibsiz</h1>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <img src="1.png" alt="Math Master">
+      <h2>Tower Blocks Game</h2>
+      <a href="uy/index.html">kirish</a>
+    </div>
+    <div class="card">
+      <img src="2.png" alt="Code Breaker">
+      <h2>Buble Game</h2>
+      <a href="otishma/index.html">kirish</a>
+    </div>
+    <div class="card">
+      <img src="3.png" alt="Hack The Grid">
+      <h2>2048 Game</h2>
+      <a href="2048/index.html">kirish</a>
+    </div>
+    <div class="card">
+      <img src="4.png" alt="Crypto Clash">
+      <h2>Snake O'yini</h2>
+      <a href="ilon/index.html">kirish</a>
+    </div>
+    <div class="card">
+      <img src="5.png" alt="Pixel Runner">
+      <h2>VAQT</h2>
+      <a href="soat/index.html">kirish</a>
+    </div>
+    <div class="card">
+      <img src="6.png" alt="Quantum Quiz">
+      <h2>Minecraft 3D</h2>
+      <a href="../minecraft/index.html">kirish</a>
+    </div>
+    <div class="card">
+      <img src="7.png" alt="New Game">
+      <h2>Sayyoralar</h2>
+      <a href="../sayyora/index.html">kirish</a>
+    </div>
+    <div class="card">
+      <img src="8.png" alt="Memory">
+      <h2>car Game</h2>
+      <a href="../Car_Game-main/cars.html">kirish</a>
+    </div>
+    <div class="card">
+      <img src="../i.png" alt="Flappy">
+      <h2>UMIGPT</h2>
+      <a href="chatbot/chat.html">kirish</a>
+    </div>
+    <div class="card">
+      <img src="10.png" alt="Tetris">
+      <h2>IT Talim haqda</h2>
+      <a href="../school-website-main/aa  IT html.html">kirish</a>
+    </div>
+  </div>
+  <script>
+    const icons = ['fab fa-html5', 'fab fa-css3-alt', 'fab fa-js', 'fab fa-python', 'fas fa-gamepad', 'fas fa-cube'];
+    function dropIcons(container) {
+      for (let i = 0; i < 15; i++) {
+        const icon = document.createElement('i');
+        icon.className = 'icon ' + icons[Math.floor(Math.random() * icons.length)];
+        icon.style.left = Math.random() * 100 + '%';
+        icon.style.top = '0px';
+        icon.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        container.appendChild(icon);
+        setTimeout(() => icon.remove(), 5000);
+      }
+    }
+  // Ctrl+U bloklash
+  document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey && e.key.toLowerCase() === 'u') {
+      e.preventDefault();
+      alert("Bu amal taqiqlangan!");
+    }
+
+    // F12 (DevTools) bloklash
+    if (e.key === "F12") {
+      e.preventDefault();
+      alert("Bu amal taqiqlangan!");
+    }
+
+    // Ctrl+Shift+I (Inspect)
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') {
+      e.preventDefault();
+      alert("Bu amal taqiqlangan!");
+    }
+
+    // Ctrl+Shift+C (Element tanlash)
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'c') {
+      e.preventDefault();
+      alert("Bu amal taqiqlangan!");
+    }
+
+    // Ctrl+Shift+J (DevTools Console)
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'j') {
+      e.preventDefault();
+      alert("Bu amal taqiqlangan!");
+    }
+  });
+
+  // O'ng tugmani bloklash
+  document.addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+    alert("O'ng tugma ishlatilmaydi!");
+  });
+
+  </script>
+  
+
+</body>
+</html>

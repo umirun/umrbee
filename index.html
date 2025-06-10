@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+</head>
+<body onclick="dropIcons(this)">
+        <nav class="navbar navbar-toggleable-md fixed-top navbar-transparent" color-on-scroll="500">
+            <div class="container">
+                <div class="navbar-translate">
+                    <button class="navbar-toggler navbar-toggler-right navbar-burger" type="button"
+                        data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarTogglerDemo02"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-bar"></span>
+                        <span class="navbar-toggler-bar"></span>
+                        <span class="navbar-toggler-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="login/index.html">UMIRBEE</a>
+                </div>
+                        </li>
+                        <li class="nav-item">
+                            <a href="login/index.html" target="_blank" class="btn btn-danger btn-round">Login</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="wrapper">
+            <div class="page-header section-dark"
+                style="background-image: url('http://demos.creative-tim.com/paper-kit-2/assets/img/antoine-barres.jpg')">
+                <div class="filter"></div>
+                <div class="content-center">
+                    <div class="container">
+                        <div class="title-brand">
+                            <h1 class="presentation-title">UMIRBEE</h1>
+                            <div class="fog-low">
+                                <img src="http://demos.creative-tim.com/paper-kit-2/assets/img/fog-low.png" alt="">
+                            </div>
+                            <div class="fog-low right">
+                                <img src="http://demos.creative-tim.com/paper-kit-2/assets/img/fog-low.png" alt="">
+                            </div>
+                        </div>
+
+                        <h2 class="presentation-subtitle text-center">Hush Kelibsiz</h2>
+                    </div>
+                </div>
+                <div class="moving-clouds"
+                    style="background-image: url('http://demos.creative-tim.com/paper-kit-2/assets/img/clouds.png'); ">
+
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
+    <script src="main.js"></script>
+    <script>
+        const icons = ['fab fa-html5', 'fab fa-css3-alt', 'fab fa-js', 'fab fa-python', 'fas fa-gamepad', 'fas fa-cube'];
+        function dropIcons(container) {
+          for (let i = 0; i < 15; i++) {
+            const icon = document.createElement('i');
+            icon.className = 'icon ' + icons[Math.floor(Math.random() * icons.length)];
+            icon.style.left = Math.random() * 100 + '%';
+            icon.style.top = '0px';
+            icon.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            container.appendChild(icon);
+            setTimeout(() => icon.remove(), 5000);
+          }
+        }
+            // Ctrl+U bloklash
+            document.addEventListener('keydown', function (e) {
+              if (e.ctrlKey && e.key.toLowerCase() === 'u') {
+                e.preventDefault();
+                confirm("Siz Bizni Kodlarimizni Kora Olmaysiz");
+              }
+          
+              // F12 (DevTools) bloklash
+              if (e.key === "F12") {
+                e.preventDefault();
+                alert("Bu amal Ishlata Olmaysiz");
+              }
+          
+              // Ctrl+Shift+I (Inspect)
+              if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') {
+                e.preventDefault();
+                alert("Bu amal taqiqlangan!");
+              }
+          
+              // Ctrl+Shift+C (Element tanlash)
+              if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'c') {
+                e.preventDefault();
+                alert("Bu amal Taqiqlangan");
+              }
+          
+              // Ctrl+Shift+J (DevTools Console)
+              if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'j') {
+                e.preventDefault();
+                alert("Bu amal Bu  Saytda Taqiqlangan");
+              }
+            });
+          
+            // O'ng tugmani bloklash
+            document.addEventListener('contextmenu', function (e) {
+              e.preventDefault();
+              alert("O'ng tugma ishlatilmaydi!");
+            });
+          </script>
+      
+</body>
+
+</html>
