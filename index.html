@@ -21,6 +21,8 @@
             --accent: #FF9800;
             --block: #7CB342;
             --dirt: #8D6E63;
+            --water: #1E88E5;
+            --lava: #E53935;
         }
 
         body {
@@ -29,21 +31,62 @@
             color: var(--dark);
             overflow-x: hidden;
             scroll-behavior: smooth;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><rect width="10" height="10" fill="%234CAF50" x="0" y="0" /><rect width="10" height="10" fill="%238BC34A" x="10" y="0" /><rect width="10" height="10" fill="%234CAF50" x="20" y="0" /><rect width="10" height="10" fill="%238BC34A" x="0" y="10" /><rect width="10" height="10" fill="%234CAF50" x="10" y="10" /><rect width="10" height="10" fill="%238BC34A" x="20" y="10" /><rect width="10" height="10" fill="%234CAF50" x="0" y="20" /><rect width="10" height="10" fill="%238BC34A" x="10" y="20" /><rect width="10" height="10" fill="%234CAF50" x="20" y="20" /></svg>'), auto;
         }
 
         .pixel-font {
             font-family: 'Press Start 2P', cursive;
         }
 
-        /* Header */
+        /* Animated Background */
+        .minecraft-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, var(--block) 0%, var(--dirt) 100%);
+            overflow: hidden;
+        }
+
+        .block {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            opacity: 0.1;
+        }
+
+        .block-grass {
+            background: linear-gradient(to bottom, var(--block) 0%, var(--block) 50%, var(--dirt) 50%, var(--dirt) 100%);
+        }
+
+        .block-stone {
+            background: #9E9E9E;
+        }
+
+        .block-water {
+            background: var(--water);
+        }
+
+        .block-lava {
+            background: var(--lava);
+        }
+
+        /* Header - Tepadagi menyu */
         header {
-            background-color: var(--dark);
+            background-color: rgba(46, 46, 46, 0.95);
+            backdrop-filter: blur(10px);
             color: white;
             padding: 15px 0;
             position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            border-bottom: 3px solid var(--primary);
         }
 
         .container {
@@ -62,16 +105,24 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            position: relative;
         }
 
         .logo img {
             width: 40px;
             height: 40px;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .logo h1 {
             font-size: 24px;
             color: var(--primary);
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.3);
         }
 
         nav ul {
@@ -84,11 +135,24 @@
             color: white;
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.3s;
+            transition: all 0.3s;
+            position: relative;
+            padding: 5px 0;
         }
 
-        nav a:hover {
-            color: var(--primary);
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        nav a:hover::after {
+            width: 100%;
         }
 
         .cta-button {
@@ -100,18 +164,35 @@
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.2);
+            transition: left 0.5s;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
         }
 
         .cta-button:hover {
             background-color: var(--secondary);
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
         }
 
-        /* Hero Section */
+        /* Hero Section - Menyu ostida */
         .hero {
-            margin-top: 80px;
+            margin-top: 80px; /* Menyu balandligi */
             padding: 80px 0;
-            background: linear-gradient(135deg, var(--block) 0%, var(--dirt) 100%);
             position: relative;
             overflow: hidden;
         }
@@ -127,6 +208,12 @@
             background-size: 100px 100px;
             opacity: 0.2;
             z-index: 0;
+            animation: backgroundMove 20s linear infinite;
+        }
+
+        @keyframes backgroundMove {
+            from { background-position: 0 0; }
+            to { background-position: 100px 100px; }
         }
 
         .hero-content {
@@ -147,12 +234,20 @@
             margin-bottom: 20px;
             color: white;
             line-height: 1.2;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 3px 3px 0px rgba(0,0,0,0.3), 0 0 10px rgba(76, 175, 80, 0.5); }
+            to { text-shadow: 3px 3px 0px rgba(0,0,0,0.3), 0 0 20px rgba(76, 175, 80, 0.8); }
         }
 
         .hero-text p {
             font-size: 18px;
             margin-bottom: 30px;
             color: rgba(255,255,255,0.9);
+            line-height: 1.6;
         }
 
         .hero-buttons {
@@ -170,11 +265,29 @@
             font-size: 16px;
             cursor: pointer;
             transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.2);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
         }
 
         .btn-primary:hover {
             background-color: #F57C00;
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.4);
         }
 
         .btn-secondary {
@@ -191,30 +304,45 @@
 
         .btn-secondary:hover {
             background-color: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,255,255,0.2);
         }
 
         .hero-image {
             flex: 1;
             display: flex;
             justify-content: center;
+            position: relative;
         }
 
         .hero-image img {
             max-width: 100%;
             height: auto;
             animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
         }
 
         @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
         }
 
         /* Features Section */
         .features {
             padding: 80px 0;
             background-color: white;
+            position: relative;
+        }
+
+        .features::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
         }
 
         .section-title {
@@ -226,13 +354,26 @@
             font-size: 36px;
             color: var(--dark);
             margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--primary);
         }
 
         .section-title p {
             font-size: 18px;
             color: #666;
             max-width: 700px;
-            margin: 0 auto;
+            margin: 20px auto 0;
         }
 
         .features-grid {
@@ -248,10 +389,31 @@
             padding: 30px;
             transition: all 0.3s;
             border-top: 4px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(76, 175, 80, 0.1) 0%, rgba(255,255,255,0) 70%);
+            z-index: 0;
+            transition: all 0.5s;
+            opacity: 0;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
         }
 
         .feature-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-10px) rotateX(5deg);
             box-shadow: 0 15px 30px rgba(0,0,0,0.1);
         }
 
@@ -259,17 +421,23 @@
             font-size: 40px;
             color: var(--primary);
             margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
         }
 
         .feature-card h3 {
             font-size: 22px;
             margin-bottom: 15px;
             color: var(--dark);
+            position: relative;
+            z-index: 1;
         }
 
         .feature-card p {
             color: #666;
             line-height: 1.6;
+            position: relative;
+            z-index: 1;
         }
 
         /* Advantages Section */
@@ -304,6 +472,7 @@
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
+            transform-style: preserve-3d;
         }
 
         .advantage-card::after {
@@ -324,7 +493,7 @@
         }
 
         .advantage-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-10px) rotateY(5deg);
             box-shadow: 0 15px 30px rgba(0,0,0,0.1);
         }
 
@@ -332,6 +501,12 @@
             font-size: 40px;
             color: var(--primary);
             margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .advantage-card:hover .advantage-icon {
+            transform: scale(1.2);
+            color: var(--accent);
         }
 
         .advantage-card h3 {
@@ -361,12 +536,24 @@
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .gif-container:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
 
         .gif-container img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: all 0.5s;
+        }
+
+        .gif-container:hover img {
+            transform: scale(1.1);
         }
 
         .gif-label {
@@ -379,6 +566,11 @@
             padding: 8px;
             text-align: center;
             font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .gif-container:hover .gif-label {
+            background: rgba(76, 175, 80, 0.8);
         }
 
         /* Footer */
@@ -386,6 +578,17 @@
             background-color: var(--dark);
             color: white;
             padding: 50px 0 20px;
+            position: relative;
+        }
+
+        footer::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
         }
 
         .footer-content {
@@ -399,6 +602,18 @@
             font-size: 18px;
             margin-bottom: 20px;
             color: var(--primary);
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: var(--primary);
         }
 
         .footer-column ul {
@@ -412,11 +627,13 @@
         .footer-column ul li a {
             color: #ccc;
             text-decoration: none;
-            transition: color 0.3s;
+            transition: all 0.3s;
+            display: inline-block;
         }
 
         .footer-column ul li a:hover {
             color: var(--primary);
+            transform: translateX(5px);
         }
 
         .social-links {
@@ -439,7 +656,8 @@
 
         .social-links a:hover {
             background-color: var(--primary);
-            transform: translateY(-3px);
+            transform: translateY(-3px) rotate(360deg);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
         }
 
         .copyright {
@@ -479,11 +697,22 @@
                 margin-top: 40px;
             }
         }
+
+        /* Floating Blocks Animation */
+        @keyframes floatBlocks {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.1; }
+            90% { opacity: 0.1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
+    <!-- Animated Background -->
+    <div class="minecraft-bg" id="minecraftBg"></div>
+
+    <!-- Header - Tepadagi menyu -->
+    <header id="header">
         <div class="container">
             <div class="header-content">
                 <div class="logo">
@@ -504,7 +733,7 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
+    <!-- Hero Section - Menyu ostida -->
     <section class="hero" id="home">
         <div class="container">
             <div class="hero-content">
@@ -651,26 +880,68 @@
                 <div class="footer-column">
                     <h3>Aloqa</h3>
                     <ul>
-                        <li><i class="fas fa-map-marker-alt"></i> Toshkent, O'zbekiston</li>
-                        <li><i class="fas fa-phone"></i> +998 90 123 45 67</li>
-                        <li><i class="fas fa-envelope"></i> info@runstax.uz</li>
+                        <li><i class="fas fa-map-marker-alt"></i> xiva, Xoraz,</li>
+                        <li><i class="fas fa-phone"></i> +998 95 422 89 59 </li>
+                        <li><i class="fas fa-envelope"></i> t.me/runstax </li>
                     </ul>
                 </div>
             </div>
             <div class="copyright">
-                <p>&copy; 2023 Runstax. Barcha huquqlar himoyalangan.</p>
+                <p>&copy; 2025 Runstax. Barcha huquqlar himoyalangan.</p>
             </div>
         </div>
     </footer>
 
     <script>
+        // Create floating Minecraft blocks
+        function createBlock() {
+            const minecraftBg = document.getElementById('minecraftBg');
+            const block = document.createElement('div');
+            block.classList.add('block');
+            
+            // Random block type
+            const blockTypes = ['block-grass', 'block-stone', 'block-water', 'block-lava'];
+            const randomType = blockTypes[Math.floor(Math.random() * blockTypes.length)];
+            block.classList.add(randomType);
+            
+            // Random size
+            const size = Math.random() * 30 + 20;
+            block.style.width = `${size}px`;
+            block.style.height = `${size}px`;
+            
+            // Random position
+            block.style.left = `${Math.random() * 100}%`;
+            block.style.top = `${Math.random() * 100}%`;
+            
+            // Random animation duration
+            const duration = Math.random() * 20 + 10;
+            block.style.animation = `floatBlocks ${duration}s linear forwards`;
+            
+            minecraftBg.appendChild(block);
+            
+            // Remove block after animation
+            setTimeout(() => {
+                block.remove();
+            }, duration * 1000);
+        }
+
+        // Create blocks periodically
+        setInterval(createBlock, 2000);
+
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const headerHeight = document.getElementById('header').offsetHeight;
+                    const targetPosition = target.offsetTop - headerHeight;
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
             });
         });
 
@@ -693,6 +964,52 @@
             card.style.transform = 'translateY(20px)';
             card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             observer.observe(card);
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.style.backgroundColor = 'rgba(46, 46, 46, 0.98)';
+                header.style.boxShadow = '0 4px 20px rgba(0,0,0,0.4)';
+                header.style.borderBottomWidth = '4px';
+            } else {
+                header.style.backgroundColor = 'rgba(46, 46, 46, 0.95)';
+                header.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+                header.style.borderBottomWidth = '3px';
+            }
+        });
+
+        // GIF Lightbox effect
+        document.querySelectorAll('.gif-container').forEach(gif => {
+            gif.addEventListener('click', function() {
+                const imgSrc = this.querySelector('img').src;
+                const lightbox = document.createElement('div');
+                lightbox.style.position = 'fixed';
+                lightbox.style.top = '0';
+                lightbox.style.left = '0';
+                lightbox.style.width = '100%';
+                lightbox.style.height = '100%';
+                lightbox.style.backgroundColor = 'rgba(0,0,0,0.8)';
+                lightbox.style.display = 'flex';
+                lightbox.style.justifyContent = 'center';
+                lightbox.style.alignItems = 'center';
+                lightbox.style.zIndex = '2000';
+                lightbox.style.cursor = 'pointer';
+                
+                const img = document.createElement('img');
+                img.src = imgSrc;
+                img.style.maxWidth = '90%';
+                img.style.maxHeight = '90%';
+                img.style.borderRadius = '8px';
+                
+                lightbox.appendChild(img);
+                document.body.appendChild(lightbox);
+                
+                lightbox.addEventListener('click', () => {
+                    lightbox.remove();
+                });
+            });
         });
     </script>
 </body>
