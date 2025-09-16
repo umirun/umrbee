@@ -1,139 +1,699 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Document</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Runstax - Minecraft Server Hosting</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        :root {
+            --primary: #4CAF50;
+            --secondary: #8BC34A;
+            --dark: #2E2E2E;
+            --light: #F5F5F5;
+            --accent: #FF9800;
+            --block: #7CB342;
+            --dirt: #8D6E63;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .pixel-font {
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--dark);
+            color: white;
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        .cta-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .cta-button:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            padding: 80px 0;
+            background: linear-gradient(135deg, var(--block) 0%, var(--dirt) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="20" height="20" fill="%237CB342" x="0" y="0" /><rect width="20" height="20" fill="%238D6E63" x="20" y="0" /><rect width="20" height="20" fill="%237CB342" x="40" y="0" /><rect width="20" height="20" fill="%238D6E63" x="60" y="0" /><rect width="20" height="20" fill="%237CB342" x="80" y="0" /><rect width="20" height="20" fill="%238D6E63" x="0" y="20" /><rect width="20" height="20" fill="%237CB342" x="20" y="20" /><rect width="20" height="20" fill="%238D6E63" x="40" y="20" /><rect width="20" height="20" fill="%237CB342" x="60" y="20" /><rect width="20" height="20" fill="%238D6E63" x="80" y="20" /></svg>');
+            background-size: 100px 100px;
+            opacity: 0.2;
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .hero-text {
+            flex: 1;
+            max-width: 600px;
+        }
+
+        .hero-text h2 {
+            font-size: 42px;
+            margin-bottom: 20px;
+            color: white;
+            line-height: 1.2;
+        }
+
+        .hero-text p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #F57C00;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 10px 25px;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero-image img {
+            max-width: 100%;
+            height: auto;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background-color: white;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-size: 36px;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            font-size: 18px;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 30px;
+            transition: all 0.3s;
+            border-top: 4px solid var(--primary);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Advantages Section */
+        .advantages {
+            padding: 80px 0;
+            background-color: var(--light);
+            position: relative;
+        }
+
+        .advantages::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+        }
+
+        .advantages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .advantage-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .advantage-card::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s;
+        }
+
+        .advantage-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .advantage-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .advantage-icon {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .advantage-card h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .advantage-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Telegram GIFs */
+        .telegram-gifs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+
+        .gif-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .gif-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gif-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 8px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero-text h2 {
+                font-size: 32px;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .hero-image {
+                margin-top: 40px;
+            }
+        }
+    </style>
 </head>
-<body onclick="dropIcons(this)">
-        <nav class="navbar navbar-toggleable-md fixed-top navbar-transparent" color-on-scroll="500">
-            <div class="container">
-                <div class="navbar-translate">
-                    <button class="navbar-toggler navbar-toggler-right navbar-burger" type="button"
-                        data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarTogglerDemo02"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-bar"></span>
-                        <span class="navbar-toggler-bar"></span>
-                        <span class="navbar-toggler-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="login/index.html">RUNSTAX</a>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="logo.png" alt="Runstax Logo">
+                    <h1 class="pixel-font">Runstax</h1>
                 </div>
-                        </li>
-                        <li class="nav-item">
-                            <a href="login/index.html" target="_blank" class="btn btn-danger btn-round">Login</a>
-                        </li>
+                <nav>
+                    <ul>
+                        <li><a href="#home">Bosh sahifa</a></li>
+                        <li><a href="#features">Xususiyatlar</a></li>
+                        <li><a href="#pricing">Narxlar</a></li>
+                        <li><a href="#advantages">Afzalliklar</a></li>
+                        <li><a href="#contact">Aloqa</a></li>
                     </ul>
-                </div>
+                </nav>
+                <button class="cta-button">Boshlash</button>
             </div>
-        </nav>
-        <div class="wrapper">
-            <div class="page-header section-dark"
-                style="background-image: url('http://demos.creative-tim.com/paper-kit-2/assets/img/antoine-barres.jpg')">
-                <div class="filter"></div>
-                <div class="content-center">
-                    <div class="container">
-                        <div class="title-brand">
-                            <h1 class="presentation-title">RUNSTAX</h1>
-                            <div class="fog-low">
-                                <img src="http://demos.creative-tim.com/paper-kit-2/assets/img/fog-low.png" alt="">
-                            </div>
-                            <div class="fog-low right">
-                                <img src="http://demos.creative-tim.com/paper-kit-2/assets/img/fog-low.png" alt="">
-                            </div>
-                        </div>
+        </div>
+    </header>
 
-                        <h2 class="presentation-subtitle text-center">Hush Kelibsiz</h2>
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h2 class="pixel-font">O'zingizning Minecraft Serveringizni yarating!</h2>
+                    <p>Runstax bilan eng yuqori sifatli Minecraft server hosting xizmati. Tez, ishonchli va arzon serverlar bilan do'stlaringiz bilan o'ynang.</p>
+                    <div class="hero-buttons">
+                        <button class="btn-primary pixel-font">Bepul sinab ko'rish</button>
+                        <button class="btn-secondary">Batafsil ma'lumot</button>
                     </div>
                 </div>
-                <div class="moving-clouds"
-                    style="background-image: url('http://demos.creative-tim.com/paper-kit-2/assets/img/clouds.png'); ">
-
+                <div class="hero-image">
+                    <img src="24.gif" alt="Minecraft Server">
                 </div>
             </div>
         </div>
-      <body>
-    <button class="chatbot-toggler">
-      <span class="material-symbols-rounded">mode_comment</span>
-      <span class="material-symbols-outlined">close</span>
-    </button>
-    <div class="chatbot">
-      <header>
-        <h2>HELPER</h2>
-        <span class="close-btn material-symbols-outlined">close</span>
-      </header>
-      <ul class="chatbox">
-        <li class="chat incoming">
-          <span class="material-symbols-outlined">smart_toy</span>
-          <p>Salom <br>Qanday Yordam Bera Olaman</p>
-        </li>
-      </ul>
-      <div class="chat-input">
-        <textarea placeholder="Enter a message..." spellcheck="false" required></textarea>
-        <span id="send-btn" class="material-symbols-rounded">Yuborish</span>
-      </div>
-    </div>
-    </body>
-    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
-    <script src="main.js"></script>
-    <script>
-        const icons = ['fab fa-html5', 'fab fa-css3-alt', 'fab fa-js', 'fab fa-python', 'fas fa-gamepad', 'fas fa-cube'];
-        function dropIcons(container) {
-          for (let i = 0; i < 15; i++) {
-            const icon = document.createElement('i');
-            icon.className = 'icon ' + icons[Math.floor(Math.random() * icons.length)];
-            icon.style.left = Math.random() * 100 + '%';
-            icon.style.top = '0px';
-            icon.style.animationDuration = (Math.random() * 2 + 2) + 's';
-            container.appendChild(icon);
-            setTimeout(() => icon.remove(), 5000);
-          }
-        }
-            // Ctrl+U bloklash
-            document.addEventListener('keydown', function (e) {
-              if (e.ctrlKey && e.key.toLowerCase() === 'u') {
-                e.preventDefault();
-                confirm("Siz Bizni Kodlarimizni Kora Olmaysiz");
-              }
-          
-              // F12 (DevTools) bloklash
-              if (e.key === "F12") {
-                e.preventDefault();
-                alert("Bu amal Ishlata Olmaysiz");
-              }
-          
-              // Ctrl+Shift+I (Inspect)
-              if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') {
-                e.preventDefault();
-                alert("Bu amal taqiqlangan!");
-              }
-          
-              // Ctrl+Shift+C (Element tanlash)
-              if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'c') {
-                e.preventDefault();
-                alert("Bu amal Taqiqlangan");
-              }
-          
-              // Ctrl+Shift+J (DevTools Console)
-              if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'j') {
-                e.preventDefault();
-                alert("Bu amal Bu  Saytda Taqiqlangan");
-              }
-            });
-          
-            // O'ng tugmani bloklash
-            document.addEventListener('contextmenu', function (e) {
-              e.preventDefault();
-              alert("O'ng tugma ishlatilmaydi!");
-            });
-          </script>
-      
-</body>
+    </section>
 
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Nega Runstaxni tanlashingiz kerak?</h2>
+                <p>Bizning Minecraft server hosting xizmatimizning asosiy afzalliklari</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Yuqori Tezlik</h3>
+                    <p>Eng zamonaviy serverlar bilan 99.9% ish vaqti va ultra past ping. O'yinchilaringiz hech qachon sekinlikdan shikoyat qilmaydi.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>To'liq Xavfsizlik</h3>
+                    <p>DDoS himoyasi, avtomatik zaxira nusxalash va 24/7 monitoring. Serveringiz har doim xavfsiz bo'ladi.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>Oson Boshqaruv</h3>
+                    <p>Maxsus panel orqali serveringizni osongina boshqaring. Pluginlarni o'rnatish, sozlamalarni o'zgartirish va boshqa barcha amallar bir necha klik bilan.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advantages Section -->
+    <section class="advantages" id="advantages">
+        <div class="container">
+            <div class="section-title">
+                <h2>Server Afzalliklari</h2>
+                <p>Bizning serverlarimizning boshqa afzalliklari</p>
+            </div>
+            <div class="advantages-grid">
+                <div class="advantage-card">
+                    <div class="advantage-icon">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <h3>SSD Disklar</h3>
+                    <p>Tez yuklanish va dunyoning tez generatsiyasi uchun SSD disklar</p>
+                </div>
+                <div class="advantage-card">
+                    <div class="advantage-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Cheksiz O'yinchilar</h3>
+                    <p>Hech qanday cheklovsiz o'yinchilar soni</p>
+                </div>
+                <div class="advantage-card">
+                    <div class="advantage-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>Jahon miqyosida</h3>
+                    <p>Butun dunyo bo'ylab server joylashuvlari</p>
+                </div>
+                <div class="advantage-card">
+                    <div class="advantage-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>24/7 Qo'llab-quvvatlash</h3>
+                    <p>Kuniga 24 soat texnik yordam xizmati</p>
+                </div>
+            </div>
+
+            <!-- Telegram GIFs -->
+            <div class="telegram-gifs">
+                <div class="gif-container">
+                    <img src="chaqmoq.gif" alt="Premium GIF">
+                    <div class="gif-label">Eng yaxshi hosting</div>
+                </div>
+                <div class="gif-container">
+                    <img src="himoya.gif" alt="Premium GIF">
+                    <div class="gif-label">DDOS Himoy</div>
+                </div>
+                <div class="gif-container">
+                    <img src="moshincha.gif" alt="Premium GIF">
+                    <div class="gif-label">Eng yaxshi tezlik</div>
+                </div>
+                <div class="gif-container">
+                    <img src="slot.gif" alt="Premium GIF">
+                    <div class="gif-label">Cheksiz Slotlar</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Runstax</h3>
+                    <p>Eng yaxshi Minecraft server hosting xizmati. Tez, ishonchli va arzon serverlar.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Tezkor havolalar</h3>
+                    <ul>
+                        <li><a href="#">Bosh sahifa</a></li>
+                        <li><a href="#">Narxlar</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Xizmatlar</h3>
+                    <ul>
+                        <li><a href="#">Server hosting</a></li>
+                        <li><a href="#">VDS</a></li>
+                        <li><a href="#">Domenlar</a></li>
+                        <li><a href="#">Sayt yaratish</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Aloqa</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> Toshkent, O'zbekiston</li>
+                        <li><i class="fas fa-phone"></i> +998 90 123 45 67</li>
+                        <li><i class="fas fa-envelope"></i> info@runstax.uz</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Runstax. Barcha huquqlar himoyalangan.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .advantage-card').forEach(card => {
+            card.style.opacity = 0;
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
 </html>
