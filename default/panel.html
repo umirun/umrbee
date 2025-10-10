@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Server Boshqaruv Paneli</title>
+    <style>
+        /* --- Umumiy Stil --- */
+        :root {
+            --bg-color: #1e2124;
+            --sidebar-bg: #2c3136;
+            --card-bg: #282b30;
+            --text-color: #dcddde;
+            --primary-color: #4CAF50;
+            --danger-color: #f04747;
+            --warning-color: #faa61a;
+            --border-color: #424549;
+            --hover-bg: #36393f;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --mono-font: 'Courier New', Courier, monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- Yon Panel (Sidebar) --- */
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-bg);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.5em;
+            color: var(--primary-color);
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-menu li {
+            margin-bottom: 10px;
+        }
+
+        .nav-menu a {
+            display: block;
+            padding: 12px 15px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .nav-menu a:hover, .nav-menu a.active {
+            background-color: var(--hover-bg);
+            color: var(--primary-color);
+        }
+
+        /* --- Asosiy Kontent --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .content-header {
+            margin-bottom: 30px;
+        }
+
+        .content-header h2 {
+            font-size: 2em;
+            font-weight: 300;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* --- Kartalar --- */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        /* --- Dashboard Stili --- */
+        .status-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .status-card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--danger-color);
+        }
+
+        .status-indicator.online {
+            background-color: var(--primary-color);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            background-color: var(--bg-color);
+            border-radius: 5px;
+            overflow: hidden;
+            height: 20px;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--primary-color);
+            text-align: right;
+            padding-right: 5px;
+            color: white;
+            line-height: 20px;
+            font-size: 0.8em;
+        }
+
+        .progress.warning { background-color: var(--warning-color); }
+        .progress.danger { background-color: var(--danger-color); }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* --- Tugmalar --- */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            color: white;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-success { background-color: var(--primary-color); }
+        .btn-danger { background-color: var(--danger-color); }
+        .btn-warning { background-color: var(--warning-color); }
+
+        /* --- Konsol Stili --- */
+        #console-output {
+            background-color: #000;
+            color: #0f0;
+            font-family: var(--mono-font);
+            height: 400px;
+            overflow-y: scroll;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .console-input-group {
+            display: flex;
+            margin-top: 15px;
+        }
+
+        .console-input-group input {
+            flex-grow: 1;
+            padding: 10px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 5px 0 0 5px;
+        }
+
+        .console-input-group button {
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* --- O'yinchilar Jadvali --- */
+        .player-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .player-table th, .player-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .player-table th {
+            background-color: var(--hover-bg);
+        }
+
+        .player-table tr:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .player-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Yon Panel -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1>⛏️ MinePanel</h1>
+        </div>
+        <nav>
+            <ul class="nav-menu">
+                <li><a href="#" class="nav-link active" data-view="dashboard">Asosiy</a></li>
+                <li><a href="#" class="nav-link" data-view="console">Konsol</a></li>
+                <li><a href="#" class="nav-link" data-view="players">O'yinchilar</a></li>
+                <li><a href="#" class="nav-link" data-view="files">Fayllar</a></li>
+                <li><a href="#" class="nav-link" data-view="settings">Sozlamalar</a></li>
+                <li><a href="#" class="nav-link" data-view="backups">Zaxiralash</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Asosiy Kontent Qismi -->
+    <main class="main-content">
+        <!-- Asosiy Panel (Dashboard) -->
+        <section id="dashboard" class="view active">
+            <div class="content-header">
+                <h2>Server holati</h2>
+            </div>
+            <div class="status-cards">
+                <div class="card status-card">
+                    <div class="card-header">
+                        Server Status
+                        <span class="status-indicator online" id="server-status"></span>
+                    </div>
+                    <p><strong>IP:</strong> play.mysuper.uz</p>
+                    <p><strong>Versiya:</strong> 1.20.1</p>
+                    <p><strong>O'yinchilar:</strong> 12 / 100</p>
+                </div>
+                <div class="card status-card">
+                    <div class="card-header">Protessor (CPU)</div>
+                    <div class="progress-bar">
+                        <div class="progress" id="cpu-progress" style="width: 35%;">35%</div>
+                    </div>
+                </div>
+                <div class="card status-card">
+                    <div class="card-header">Xotira (RAM)</div>
+                    <div class="progress-bar">
+                        <div class="progress" id="ram-progress" style="width: 60%;">60%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">Tezkor harakatlar</div>
+                <div class="action-buttons">
+                    <button class="btn btn-success" id="start-btn">Start</button>
+                    <button class="btn btn-warning" id="restart-btn">Restart</button>
+                    <button class="btn btn-danger" id="stop-btn">Stop</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Konsol -->
+        <section id="console" class="view">
+            <div class="content-header">
+                <h2>Server Konsoli</h2>
+            </div>
+            <div class="card">
+                <div id="console-output">
+[12:34:56] [Server thread/INFO]: Starting minecraft server version 1.20.1
+[12:34:57] [Server thread/INFO]: Loading properties
+[12:34:57] [Server thread/INFO]: Default game type: SURVIVAL
+[12:34:58] [Server thread/INFO]: Generating keypair
+[12:34:59] [Server thread/INFO]: Starting Minecraft server on *:25565
+[12:35:00] [Server thread/INFO]: Using default channel type
+[12:35:01] [Server thread/INFO]: Preparing level "world"
+[12:35:10] [Server thread/INFO]: Preparing start region for dimension minecraft:overworld
+[12:35:15] [Server thread/INFO]: Time elapsed: 5234 ms
+[12:35:15] [Server thread/INFO]: Done (12.345s)! For help, type "help"
+[12:36:01] [User Authenticator #1/INFO]: UUID of player Notch is 069a79f4-44e9-4726-a5be-fca90e38aaf5
+[12:36:01] [Server thread/INFO]: Notch[/127.0.0.1:52321] logged in with entity id 123 in world world.
+[12:36:02] [Server thread/INFO]: Notch joined the game
+                </div>
+                <div class="console-input-group">
+                    <input type="text" id="console-command" placeholder="Buyruqni kiriting (masalan: /list)">
+                    <button class="btn btn-success" id="send-command-btn">Yuborish</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- O'yinchilar -->
+        <section id="players" class="view">
+            <div class="content-header">
+                <h2>O'yinchilar Ro'yxati</h2>
+            </div>
+            <div class="card">
+                <table class="player-table">
+                    <thead>
+                        <tr>
+                            <th>Avatar</th>
+                            <th>Nickname</th>
+                            <th>Ping</th>
+                            <th>Harakatlar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><img src="https://mc-heads.net/avatar/Notch/30" alt="Notch" class="player-avatar"></td>
+                            <td>Notch</td>
+                            <td>45ms</td>
+                            <td>
+                                <button class="btn btn-warning kick-btn" data-player="Notch">Kick</button>
+                                <button class="btn btn-danger ban-btn" data-player="Notch">Ban</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><img src="https://mc-heads.net/avatar/Steve/30" alt="Steve" class="player-avatar"></td>
+                            <td>Steve</td>
+                            <td>52ms</td>
+                            <td>
+                                <button class="btn btn-warning kick-btn" data-player="Steve">Kick</button>
+                                <button class="btn btn-danger ban-btn" data-player="Steve">Ban</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><img src="https://mc-heads.net/avatar/Alex/30" alt="Alex" class="player-avatar"></td>
+                            <td>Alex</td>
+                            <td>38ms</td>
+                            <td>
+                                <button class="btn btn-warning kick-btn" data-player="Alex">Kick</button>
+                                <button class="btn btn-danger ban-btn" data-player="Alex">Ban</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Boshqa bo'limlar (Fayllar, Sozlamalar, Zaxiralash) -->
+        <section id="files" class="view">
+            <div class="content-header"><h2>Fayl Menejeri</h2></div>
+            <div class="card"><p>Ushbu bo'lim hali ishlanmoqda...</p></div>
+        </section>
+
+        <section id="settings" class="view">
+            <div class="content-header"><h2>Server Sozlamalari</h2></div>
+            <div class="card"><p>Ushbu bo'lim hali ishlanmoqda...</p></div>
+        </section>
+
+        <section id="backups" class="view">
+            <div class="content-header"><h2>Zaxira nusxalar</h2></div>
+            <div class="card"><p>Ushbu bo'lim hali ishlanmoqda...</p></div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Navigatsiya ---
+            const navLinks = document.querySelectorAll('.nav-link');
+            const views = document.querySelectorAll('.view');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const targetViewId = this.getAttribute('data-view');
+
+                    // Faol linkni o'zgartirish
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Ko'rinadigan bo'limni o'zgartirish
+                    views.forEach(view => view.classList.remove('active'));
+                    document.getElementById(targetViewId).classList.add('active');
+                });
+            });
+
+            // --- Dashboard simulyatsiyasi ---
+            const cpuProgress = document.getElementById('cpu-progress');
+            const ramProgress = document.getElementById('ram-progress');
+
+            function updateProgress() {
+                const cpuUsage = Math.floor(Math.random() * 40) + 20; // 20-60%
+                const ramUsage = Math.floor(Math.random() * 30) + 50; // 50-80%
+
+                cpuProgress.style.width = cpuUsage + '%';
+                cpuProgress.textContent = cpuUsage + '%';
+                ramProgress.style.width = ramUsage + '%';
+                ramProgress.textContent = ramUsage + '%';
+
+                // Ranglarni o'zgartirish
+                cpuProgress.className = 'progress';
+                if (cpuUsage > 50) cpuProgress.classList.add('warning');
+                if (cpuUsage > 75) cpuProgress.classList.add('danger');
+
+                ramProgress.className = 'progress';
+                if (ramUsage > 70) ramProgress.classList.add('warning');
+                if (ramUsage > 85) ramProgress.classList.add('danger');
+            }
+            setInterval(updateProgress, 3000); // Har 3 soniyada yangilash
+
+            // --- Konsol simulyatsiyasi ---
+            const consoleOutput = document.getElementById('console-output');
+            const consoleCommand = document.getElementById('console-command');
+            const sendCommandBtn = document.getElementById('send-command-btn');
+
+            const sampleLogs = [
+                "[Server thread/INFO]: <Notch> Hello world!",
+                "[Server thread/INFO]: <Steve> Where is everyone?",
+                "[Server thread/INFO]: <Alex> Let's go to the Nether!",
+                "[Server thread/WARN]: Can't keep up! Is the server overloaded? Running 2345ms behind, skipping 46 tick(s)",
+                "[User Authenticator #2/INFO]: UUID of player Herobrine is f84c7025-1d5d-4aba-87f5-4b6e1b738874",
+                "[Server thread/INFO]: Herobrine[/127.0.0.1:54321] logged in with entity id 456 in world world.",
+                "[Server thread/INFO]: Herobrine joined the game"
+            ];
+
+            function addConsoleMessage(message) {
+                const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
+                consoleOutput.textContent += `\n[${time}] ${message}`;
+                consoleOutput.scrollTop = consoleOutput.scrollHeight; // Pastga qarab aylantirish
+            }
+
+            function sendCommand() {
+                const command = consoleCommand.value.trim();
+                if (command) {
+                    addConsoleMessage(`[Server thread/INFO]: ${command}`);
+                    // Simulyatsiya qilingan javob
+                    if (command === '/list') {
+                        addConsoleMessage("There are 3 of a max of 100 players online: Notch, Steve, Alex");
+                    } else if (command.startsWith('/say')) {
+                        addConsoleMessage(`[Server] ${command.substring(5)}`);
+                    } else {
+                        addConsoleMessage(`[Server thread/INFO]: Unknown or incomplete command: "${command}"`);
+                    }
+                    consoleCommand.value = '';
+                }
+            }
+
+            sendCommandBtn.addEventListener('click', sendCommand);
+            consoleCommand.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    sendCommand();
+                }
+            });
+
+            // Har 5-10 soniyada yangi log qo'shish
+            setInterval(() => {
+                const randomLog = sampleLogs[Math.floor(Math.random() * sampleLogs.length)];
+                addConsoleMessage(randomLog);
+            }, 8000);
+
+
+            // --- Server harakatlari tugmalari ---
+            document.getElementById('start-btn').addEventListener('click', () => {
+                addConsoleMessage("[CONTROL] Server start command received.");
+                document.getElementById('server-status').classList.add('online');
+            });
+            document.getElementById('stop-btn').addEventListener('click', () => {
+                addConsoleMessage("[CONTROL] Server stop command received. Shutting down...");
+                document.getElementById('server-status').classList.remove('online');
+            });
+            document.getElementById('restart-btn').addEventListener('click', () => {
+                addConsoleMessage("[CONTROL] Server restart command received. Restarting in 5 seconds...");
+            });
+
+            // --- O'yinchilarga nisbatan harakatlar ---
+            document.querySelectorAll('.kick-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const playerName = this.getAttribute('data-player');
+                    if (confirm(`${playerName} ni serverdan chiqarib yubormoqchimisiz?`)) {
+                        addConsoleMessage(`[Server thread/INFO]: Kicked ${playerName} from the game`);
+                        this.closest('tr').remove(); // Jadvaldan o'chirish
+                    }
+                });
+            });
+
+            document.querySelectorAll('.ban-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const playerName = this.getAttribute('data-player');
+                    if (confirm(`${playerName} ni serverdan abadiy banlamoqchimisiz?`)) {
+                        addConsoleMessage(`[Server thread/INFO]: Banned ${playerName} from the game`);
+                        this.closest('tr').remove(); // Jadvaldan o'chirish
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

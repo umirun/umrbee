@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register & Login Tizimi</title>
+    <style>
+        /* Umumiy stil */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        /* Konteyner stil */
+        .container {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 1.5rem;
+            color: #1c1e21;
+        }
+
+        /* Formalar va inputlar */
+        .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #dddfe2;
+            border-radius: 6px;
+            font-size: 1rem;
+            box-sizing: border-box; /* Paddingni kenglikka hisoblash */
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        input[type="email"]:focus {
+            outline: none;
+            border-color: #1877f2;
+            box-shadow: 0 0 0 2px #e7f3ff;
+        }
+
+        /* Tugmalar */
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background-color: #1877f2;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #166fe5;
+        }
+
+        .btn-secondary {
+            background-color: #e4e6eb;
+            color: #050505;
+            margin-top: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background-color: #d8dadf;
+        }
+
+        /* Captcha */
+        #captcha-question {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Xabarlar (xatolik, muvaffaqiyat) */
+        #message {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            display: none; /* Dastlab yashirin */
+        }
+
+        .message-error {
+            background-color: #ffebe8;
+            color: #d93025;
+            border: 1px solid #d93025;
+        }
+
+        .message-success {
+            background-color: #e7f4e8;
+            color: #137333;
+            border: 1px solid #137333;
+        }
+
+        /* Sahifalarni almashtirish uchun */
+        .page {
+            display: none; /* Barcha sahifalarni dastlab yashiramiz */
+        }
+
+        .page.active {
+            display: block; /* Faol sahifani ko'rsatamiz */
+        }
+
+        /* Linklar */
+        .switch-page-link {
+            color: #1877f2;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .switch-page-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <main class="container">
+        <!-- Ro'yxatdan o'tish sahifasi -->
+        <section id="register-page" class="page active">
+            <h2>Ro'yxatdan o'tish</h2>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="reg-username">Foydalanuvchi nomi:</label>
+                    <input type="text" id="reg-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email:</label>
+                    <input type="email" id="reg-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Parol:</label>
+                    <input type="password" id="reg-password" required>
+                </div>
+                <div class="form-group">
+                    <label>Captcha tasdiqlang:</label>
+                    <div id="captcha-question"></div>
+                    <input type="text" id="captcha-answer" placeholder="Javobni kiriting" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Ro'yxatdan o'tish</button>
+                <div id="message"></div>
+            </form>
+            <p style="margin-top: 1.5rem;">
+                Akkauntingiz bormi? <a class="switch-page-link" onclick="showPage('login-page')">Kirish</a>
+            </p>
+        </section>
+
+        <!-- Login sahifasi -->
+        <section id="login-page" class="page">
+            <h2>Tizimga kirish</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-username">Foydalanuvchi nomi:</label>
+                    <input type="text" id="login-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Parol:</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Kirish</button>
+                <div id="message"></div>
+            </form>
+            <p style="margin-top: 1.5rem;">
+                Akkauntingiz yo'qmi? <a class="switch-page-link" onclick="showPage('register-page')">Ro'yxatdan o'tish</a>
+            </p>
+        </section>
+
+        <!-- Xush kelibsiz sahifasi -->
+        <section id="welcome-page" class="page">
+            <h2 id="welcome-message">Xush kelibsiz!</h2>
+            <p>Siz muvaffaqiyatli tizimga kirdingiz.</p>
+            <button class="btn btn-secondary" onclick="logout()">Panelga o'tish</button>
+        </section>
+    </main>
+
+    <script>
+        // --- Global o'zgaruvchilar ---
+        let captchaAnswer = 0;
+        const USERS_KEY = 'registeredUsers';
+        const LOGGED_IN_USER_KEY = 'loggedInUser';
+
+        // --- Sahifalarni boshqarish ---
+        function showPage(pageId) {
+            // Barcha sahifalardan 'active' klassini olib tashlaymiz
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            // Tanlangan sahifaga 'active' klassini qo'shamiz
+            document.getElementById(pageId).classList.add('active');
+
+            // Agar ro'yxatdan o'tish sahifasiga o'tilsa, captchani yangilaymiz
+            if (pageId === 'register-page') {
+                generateCaptcha();
+            }
+            // Xabarlar qutisini tozalaymiz
+            hideMessage();
+        }
+
+        // --- Captcha ---
+        function generateCaptcha() {
+            const num1 = Math.floor(Math.random() * 10) + 1;
+            const num2 = Math.floor(Math.random() * 10) + 1;
+            captchaAnswer = num1 + num2;
+            document.getElementById('captcha-question').innerText = `${num1} + ${num2} = ?`;
+        }
+
+        // --- Xabar ko'rsatish ---
+        function showMessage(text, isError = false) {
+            const messageEl = document.getElementById('message');
+            messageEl.innerText = text;
+            messageEl.style.display = 'block';
+            messageEl.className = isError ? 'message-error' : 'message-success';
+        }
+
+        function hideMessage() {
+            const messageEl = document.getElementById('message');
+            messageEl.style.display = 'none';
+        }
+
+        // --- Ro'yxatdan o'tish logikasi ---
+        document.getElementById('register-form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Formning standart yuborilishini oldini olamiz
+            hideMessage();
+
+            const username = document.getElementById('reg-username').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const userCaptchaAnswer = parseInt(document.getElementById('captcha-answer').value, 10);
+
+            // Captchani tekshirish
+            if (userCaptchaAnswer !== captchaAnswer) {
+                showMessage("Captcha noto'g'ri! Iltimos, qayta urinib ko'ring.", true);
+                generateCaptcha(); // Captchani yangilaymiz
+                return;
+            }
+
+            // Foydalanuvchilarni localStorage'dan olish
+            let users = JSON.parse(localStorage.getItem(USERS_KEY)) || [];
+
+            // Foydalanuvchi nomi bandligini tekshirish
+            if (users.some(user => user.username === username)) {
+                showMessage("Bu foydalanuvchi nomi allaqachon band. Boshqa nom tanlang.", true);
+                return;
+            }
+
+            // Yangi foydalanuvchini qo'shish
+            const newUser = { username, email, password };
+            users.push(newUser);
+            localStorage.setItem(USERS_KEY, JSON.stringify(users));
+
+            showMessage("Muvaffaqiyatli ro'yxatdan o'tdingiz! Endi tizimga kirishingiz mumkin.", false);
+            
+            // Formni tozalash
+            document.getElementById('register-form').reset();
+            
+            // 2 soniyadan keyin login sahifasiga o'tkazish
+            setTimeout(() => {
+                showPage('login-page');
+            }, 2000);
+        });
+
+        // --- Login logikasi ---
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            hideMessage();
+
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            // Foydalanuvchilarni localStorage'dan olish
+            const users = JSON.parse(localStorage.getItem(USERS_KEY)) || [];
+
+            // Foydalanuvchini topish
+            const foundUser = users.find(user => user.username === username && user.password === password);
+
+            if (foundUser) {
+                // Muvaffaqiyatli kirish
+                localStorage.setItem(LOGGED_IN_USER_KEY, foundUser.username);
+                document.getElementById('welcome-message').innerText = `Xush kelibsiz, ${foundUser.username}!`;
+                showPage('welcome-page');
+            } else {
+                // Xatolik
+                showMessage("Foydalanuvchi nomi yoki parol noto'g'ri.", true);
+            }
+        });
+
+        // --- Chiqish logikasi ---
+        function logout() {
+            localStorage.removeItem(LOGGED_IN_USER_KEY);
+            window.location.href = 'panel.html';
+        }
+
+        // --- Sahifa yuklanganda tekshirish ---
+        window.onload = function() {
+            const loggedInUser = localStorage.getItem(LOGGED_IN_USER_KEY);
+            if (loggedInUser) {
+                document.getElementById('welcome-message').innerText = `Xush kelibsiz, ${loggedInUser}!`;
+                showPage('welcome-page');
+            } else {
+                showPage('login-page'); // Agar hech kim tizimda bo'lmasa, login sahifasini ko'rsatamiz
+            }
+        };
+    </script>
+</body>
+</html>
