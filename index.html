@@ -190,9 +190,9 @@
             justify-content: center;
             text-align: center;
             padding-top: 80px;
-            background: url('https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/videos/Homepage_Ambient-Hero-A_FGD-25_1920x1080.webm') no-repeat center center/cover;
             position: relative;
             transition: filter 0.5s ease;
+            overflow: hidden;
         }
         body.warm-theme .hero {
             filter: sepia(20%) hue-rotate(320deg) brightness(0.9);
@@ -206,13 +206,14 @@
             height: 100%;
             background: rgba(10, 14, 26, 0.7);
             transition: background 0.5s ease;
+            z-index: 1;
         }
         body.warm-theme .hero::before {
             background: rgba(26, 26, 46, 0.7);
         }
         .hero .container {
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
         .hero-title {
             font-size: 3.5rem;
@@ -431,6 +432,12 @@
     <main>
         <!-- Hero Section -->
         <section class="hero">
+            <!-- Video background -->
+            <video autoplay muted loop id="hero-video">
+                <source src="video.mp4" type="video/mp4">
+                Sizning brauzeringiz video elementini qo'llab-quvvatlamaydi.
+            </video>
+            
             <div class="container">
                 <h1 class="hero-title">O'zingizning Minecraft <span>olam</span>ingizni yarating!</h1>
                 <p class="hero-subtitle">Tez, xavfsiz va arzon Minecraft serverlari. Bir necha daqiqada do'stlaringiz bilan sarguzashtlarni boshlang.</p>
@@ -618,6 +625,18 @@
                 localStorage.removeItem('theme');
             }
         });
+        
+        // Video fonini to'g'ri ko'rsatish uchun qo'shimcha stil
+        const heroVideo = document.getElementById('hero-video');
+        if (heroVideo) {
+            heroVideo.style.position = 'absolute';
+            heroVideo.style.top = '0';
+            heroVideo.style.left = '0';
+            heroVideo.style.width = '100%';
+            heroVideo.style.height = '100%';
+            heroVideo.style.objectFit = 'cover';
+            heroVideo.style.zIndex = '0';
+        }
     </script>
 
 </body>
