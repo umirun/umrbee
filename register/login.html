@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login / Register</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
+    *{box-sizing:border-box;font-family: 'Quicksand', sans-serif;}
+    body{
+      background-image:url(https://raw.githubusercontent.com/CiurescuP/LogIn-Form/main/bg.jpg);
+      min-height:100vh;
+      background-size:cover;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin:0;
+    }
+    .card{
+      width:450px;
+      background:rgba(255,255,255,0.13);
+      border-radius:17px;
+      padding:20px;
+      border:5px solid rgba(255,255,255,0.1);
+      backdrop-filter:blur(5px);
+      box-shadow:0 0 40px rgba(129,236,174,0.5);
+      color:#fff;
+    }
+    h2{text-align:center;margin:6px 0 18px;font-size:32px}
+    .tabs{display:flex;gap:10px;justify-content:center;margin-bottom:12px}
+    .tabs button{
+      padding:8px 18px;
+      border-radius:8px;
+      border:2px solid rgba(255,255,255,0.12);
+      background:transparent;
+      color:#fff;
+      cursor:pointer;
+    }
+    .tabs button.active{
+      background:#629677;
+      border-color:#629677;
+    }
+    label{display:block;margin-top:12px;font-weight:700}
+    input{
+      width:100%;
+      padding:10px;
+      border-radius:6px;
+      border:2px solid #38363654;
+      background:rgba(0,0,0,0.22);
+      color:#fff;
+      margin-top:8px;
+    }
+    .small{font-size:13px;color:#e8e8e8;margin-top:8px}
+    .btn{
+      margin-top:18px;
+      padding:10px;
+      border-radius:6px;
+      width:100%;
+      background:rgba(0,0,0,0.22);
+      border:2px solid #38363654;
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .msg{
+      margin-top:12px;
+      padding:8px;
+      border-radius:6px;
+      display:none;
+    }
+    .msg.error{
+      background:#ff4d4d;
+      color:#fff;
+    }
+    .msg.success{
+      background:#2bb673;
+      color:#fff;
+    }
+    .social-icons{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      margin-top:14px;
+    }
+    .social-icons button{
+      border-radius:40px;
+      width:40px;
+      height:40px;
+      border:none;
+      background:#ffffff22;
+      color:#fff;
+      cursor:pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <script>
+    // Agar foydalanuvchi oldin login qilgan bo'lsa, to'g'ridan-to'g'ri panel.html ga yo'naltirish
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+      location.href = 'panel.html';
+    }
+  </script>
+
+  <div class="card">
+    <h2 id="title">Login Here</h2>
+
+    <div class="tabs">
+      <button id="tab-login" class="active">Login</button>
+      <button id="tab-register">Register</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="login-form">
+      <label for="login-email">Email yoki telefon</label>
+      <input id="login-email" type="text" placeholder="Email or Phone" />
+
+      <label for="login-pass">Password</label>
+      <input id="login-pass" type="password" placeholder="Password" />
+
+      <button id="btn-login" class="btn">Log In</button>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="register-form" style="display:none">
+      <label for="reg-email">Email </label>
+      <input id="reg-email" type="email" placeholder="example@gmail.com" />
+
+      <label for="reg-pass">Password</label>
+      <input id="reg-pass" type="password" placeholder="Password" />
+
+      <label for="reg-pass2">Confirm Password</label>
+      <input id="reg-pass2" type="password" placeholder="Repeat Password" />
+
+      <button id="btn-register" class="btn">Register</button>
+      <p class="small">Email faqat <strong>@gmail.com</strong> bilan tugashi kerak.</p>
+    </div>
+
+    <div id="message" class="msg"></div>
+
+    <p class="social-text" style="text-align:center;margin-top:12px">Login with a social media account</p>
+    <div class="social-icons">
+      <button class="fb"><i class="fa-brands fa-facebook"></i></button>
+      <button class="tw"><i class="fa-brands fa-twitter"></i></button>
+      <button class="in"><i class="fa-brands fa-instagram"></i></button>
+    </div>
+  </div>
+
+  <script>
+    // --- UI tabs ---
+    const tabLogin = document.getElementById('tab-login');
+    const tabRegister = document.getElementById('tab-register');
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const title = document.getElementById('title');
+    const msgEl = document.getElementById('message');
+
+    tabLogin.onclick = () => {
+      tabLogin.classList.add('active');
+      tabRegister.classList.remove('active');
+      loginForm.style.display = 'block';
+      registerForm.style.display = 'none';
+      title.textContent = 'Login Here';
+      hideMsg();
+    }
+    tabRegister.onclick = () => {
+      tabRegister.classList.add('active');
+      tabLogin.classList.remove('active');
+      loginForm.style.display = 'none';
+      registerForm.style.display = 'block';
+      title.textContent = 'Register';
+      hideMsg();
+    }
+
+    // --- Helpers ---
+    function showMsg(text, type = 'error') {
+      msgEl.textContent = text;
+      msgEl.className = 'msg ' + (type === 'error' ? 'error' : 'success');
+      msgEl.style.display = 'block';
+    }
+    function hideMsg() {
+      msgEl.style.display = 'none';
+    }
+
+    // Web Crypto helper to hash password using SHA-256, returns hex string
+    async function hashPassword(password) {
+      const enc = new TextEncoder();
+      const data = enc.encode(password);
+      const digest = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(digest));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // LocalStorage users store under key 'users' as array [{email, passHash}]
+    function getUsers() {
+      try {
+        return JSON.parse(localStorage.getItem('users') || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+    function saveUsers(users) {
+      localStorage.setItem('users', JSON.stringify(users));
+    }
+
+    // --- Register ---
+    document.getElementById('btn-register').addEventListener('click', async (e) => {
+      e.preventDefault();
+      hideMsg();
+
+      const email = document.getElementById('reg-email').value.trim().toLowerCase();
+      const pass = document.getElementById('reg-pass').value;
+      const pass2 = document.getElementById('reg-pass2').value;
+
+      if (!email || !pass || !pass2) {
+        showMsg('Iltimos barcha maydonlarni toʻldiring.');
+        return;
+      }
+      if (!email.endsWith('@gmail.com')) {
+        showMsg('Email @gmail.com bilan tugashi kerak.');
+        return;
+      }
+      if (pass.length < 6) {
+        showMsg('Parol kamida 6 ta belgidan iborat boʻlishi kerak.');
+        return;
+      }
+      if (pass !== pass2) {
+        showMsg('Parollar mos emas.');
+        return;
+      }
+
+      const users = getUsers();
+      if (users.some(u => u.email === email)) {
+        showMsg('Bu email oldin roʻyxatdan oʻtgan.');
+        return;
+      }
+
+      const passHash = await hashPassword(pass);
+      users.push({ email, passHash, created: new Date().toISOString() });
+      saveUsers(users);
+
+      showMsg('Roʻyxatdan muvaffaqiyatli oʻtdingiz! Hozir login qilishingiz mumkin.', 'success');
+
+      // toza maydonlar
+      document.getElementById('reg-email').value = '';
+      document.getElementById('reg-pass').value = '';
+      document.getElementById('reg-pass2').value = '';
+    });
+
+    // --- Login ---
+    document.getElementById('btn-login').addEventListener('click', async (e) => {
+      e.preventDefault();
+      hideMsg();
+
+      const identifier = document.getElementById('login-email').value.trim().toLowerCase();
+      const pass = document.getElementById('login-pass').value;
+
+      if (!identifier || !pass) {
+        showMsg('Iltimos email/phone va parolni kiriting.');
+        return;
+      }
+
+      const users = getUsers();
+      const user = users.find(u => u.email === identifier);
+
+      if (!user) {
+        showMsg('Foydalanuvchi topilmadi. Iltimos roʻyxatdan oʻting.');
+        return;
+      }
+
+      const passHash = await hashPassword(pass);
+      if (passHash !== user.passHash) {
+        showMsg('Parol notoʻgʻri.');
+        return;
+      }
+
+      // success: saqlash session (misol uchun currentUser)
+      localStorage.setItem('currentUser', JSON.stringify({ email: user.email, loggedAt: new Date().toISOString() }));
+
+      // Redirect to panel.html
+      location.href = 'panel.html';
+    });
+  </script>
+</body>
+</html>

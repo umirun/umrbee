@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Minecraft Server Monitoring Panel</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap');
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Quicksand', sans-serif;
+    }
+    body {
+      background-image: url('https://raw.githubusercontent.com/CiurescuP/LogIn-Form/main/bg.jpg');
+      min-height: 100vh;
+      background-size: cover;
+      background-attachment: fixed;
+      color: #fff;
+    }
+    .header {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #629677;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+    .btn-logout {
+      background: rgba(255, 77, 77, 0.7);
+      border: none;
+      padding: 8px 15px;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .btn-logout:hover {
+      background: rgba(255, 77, 77, 0.9);
+    }
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    .view {
+      display: none;
+    }
+    .view.active {
+      display: block;
+    }
+    /* Server List View */
+    .servers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .server-box {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      border-radius: 15px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .server-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+    .server-box.online {
+      border-left: 5px solid #2bb673;
+    }
+    .server-box.offline {
+      border-left: 5px solid #ff4d4d;
+    }
+    .server-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .server-name {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .server-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ff4d4d;
+    }
+    .status-indicator.online {
+      background: #2bb673;
+    }
+    .server-ip {
+      font-size: 16px;
+      margin-bottom: 10px;
+      opacity: 0.8;
+    }
+    .server-players {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .player-icon {
+      color: #629677;
+    }
+    .add-server-btn {
+      background: rgba(98, 150, 119, 0.7);
+      border: none;
+      border-radius: 15px;
+      padding: 20px;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      height: 100%;
+    }
+    .add-server-btn:hover {
+      background: rgba(98, 150, 119, 0.9);
+    }
+    .add-server-btn i {
+      font-size: 30px;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal.active {
+      display: flex;
+    }
+    .modal-content {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 30px;
+      width: 90%;
+      max-width: 500px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .modal-title {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .close-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .form-input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.3);
+      color: white;
+    }
+    .form-btn {
+      background: #629677;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .form-btn:hover {
+      background: #4a735a;
+    }
+    .notification {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 15px 20px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+    }
+    .notification.show {
+      transform: translateX(0);
+    }
+    .notification.success {
+      border-left: 4px solid #2bb673;
+    }
+    .notification.error {
+      border-left: 4px solid #ff4d4d;
+    }
+    .notification.info {
+      border-left: 4px solid #629677;
+    }
+    .delete-server-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 77, 77, 0.7);
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: all 0.3s;
+    }
+    .server-box:hover .delete-server-btn {
+      opacity: 1;
+    }
+    .delete-server-btn:hover {
+      background: rgba(255, 77, 77, 0.9);
+    }
+    .server-list-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .server-list-title {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .refresh-btn {
+      background: rgba(0, 0, 0, 0.3);
+      border: none;
+      padding: 8px 15px;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .refresh-btn:hover {
+      background: rgba(0, 0, 0, 0.5);
+    }
+    
+    /* Server Panel View */
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 15px;
+    }
+    .panel-title {
+      font-size: 28px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .panel-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 15px;
+      border-radius: 30px;
+      background: rgba(0, 0, 0, 0.3);
+    }
+    .panel-controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .control-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      background: rgba(0, 0, 0, 0.3);
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .control-btn:hover {
+      background: rgba(0, 0, 0, 0.5);
+    }
+    .control-btn.start {
+      background: rgba(43, 182, 115, 0.7);
+    }
+    .control-btn.stop {
+      background: rgba(255, 77, 77, 0.7);
+    }
+    .control-btn.restart {
+      background: rgba(255, 165, 0, 0.7);
+    }
+    .panel-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .detail-card {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      border-radius: 10px;
+    }
+    .detail-label {
+      font-size: 14px;
+      opacity: 0.7;
+      margin-bottom: 5px;
+    }
+    .detail-value {
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .tabs-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .tab-btn {
+      padding: 10px 20px;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      position: relative;
+      transition: all 0.3s;
+    }
+    .tab-btn.active {
+      color: #629677;
+    }
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #629677;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .console-container {
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 10px;
+      padding: 15px;
+      height: 400px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+    .console-line {
+      margin-bottom: 5px;
+      display: flex;
+    }
+    .console-time {
+      color: #629677;
+      margin-right: 10px;
+    }
+    .console-input {
+      display: flex;
+      gap: 10px;
+    }
+    .console-input input {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+      padding: 8px 15px;
+      color: white;
+    }
+    .console-input button {
+      background: #629677;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 15px;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .players-container {
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .players-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    .player-card {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .player-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 5px;
+      background: #629677;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .player-info {
+      flex: 1;
+    }
+    .player-name {
+      font-weight: 600;
+    }
+    .player-status {
+      font-size: 14px;
+      opacity: 0.7;
+    }
+    .back-to-servers-btn {
+      background: rgba(0, 0, 0, 0.3);
+      border: none;
+      padding: 8px 15px;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .back-to-servers-btn:hover {
+      background: rgba(0, 0, 0, 0.5);
+    }
+    .loading-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #fff;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <i class="fas fa-cube"></i>
+      <span>Minecraft Server Monitoring</span>
+    </div>
+    <div class="user-info">
+      <div class="user-avatar" id="userAvatar">U</div>
+      <div>
+        <div id="userEmail">user@example.com</div>
+        <div style="font-size: 12px; opacity: 0.7;">Server Administrator</div>
+      </div>
+      <button class="btn-logout" id="logoutBtn">
+        <i class="fas fa-sign-out-alt"></i> Chiqish
+      </button>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Server List View -->
+    <div id="serverListView" class="view active">
+      <div class="server-list-container">
+        <div class="server-list-title">Serverlar Ro'yxati</div>
+        <div class="server-actions">
+          <button class="refresh-btn" id="refreshAllBtn">
+            <i class="fas fa-sync-alt"></i> Hammasini Yangilash
+          </button>
+        </div>
+      </div>
+      <div class="servers-grid" id="serversGrid">
+        <!-- Serverlar bu yerda dinamik ravishda yuklanadi -->
+      </div>
+    </div>
+
+    <!-- Server Panel View -->
+    <div id="serverPanelView" class="view">
+      <div class="panel-header">
+        <div class="panel-title">
+          <i class="fas fa-server"></i>
+          <span id="panelServerName">Server Panel</span>
+        </div>
+        <div class="panel-status">
+          <div class="status-indicator" id="panelStatusIndicator"></div>
+          <span id="panelStatusText">Offline</span>
+        </div>
+      </div>
+
+      <button class="back-to-servers-btn" id="backToServersBtn">
+        <i class="fas fa-arrow-left"></i> Serverlar ro'yxatiga qaytish
+      </button>
+
+      <div class="panel-controls">
+        <button class="control-btn start" id="panelStartBtn">
+          <i class="fas fa-play"></i> Start
+        </button>
+        <button class="control-btn stop" id="panelStopBtn">
+          <i class="fas fa-stop"></i> Stop
+        </button>
+        <button class="control-btn restart" id="panelRestartBtn">
+          <i class="fas fa-redo"></i> Restart
+        </button>
+      </div>
+
+      <div class="panel-details">
+        <div class="detail-card">
+          <div class="detail-label">Server IP</div>
+          <div class="detail-value" id="panelServerIP">nurlicraft.uz</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-label">O'yinchilar</div>
+          <div class="detail-value" id="panelServerPlayers">0/20</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-label">Versiya</div>
+          <div class="detail-value" id="panelServerVersion">1.20.1</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-label">Uptime</div>
+          <div class="detail-value" id="panelServerUptime">00:00:00</div>
+        </div>
+      </div>
+
+      <div class="tabs-container">
+        <button class="tab-btn active" data-tab="console">Konsol</button>
+        <button class="tab-btn" data-tab="players">O'yinchilar</button>
+      </div>
+
+      <div class="tab-content active" id="console">
+        <div class="console-container" id="panelConsoleContainer">
+          <div class="console-line"><span class="console-time">[12:00:00]</span> <span>Server is starting...</span></div>
+        </div>
+        <div class="console-input">
+          <input type="text" id="panelConsoleInput" placeholder="Komanda kiriting...">
+          <button id="panelSendCommandBtn">Yuborish</button>
+        </div>
+      </div>
+
+      <div class="tab-content" id="players">
+        <div class="players-container">
+          <h3 style="margin-bottom: 20px;">Online Players</h3>
+          <div class="players-list" id="panelPlayersList">
+            <!-- Players will be loaded here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Server Modal -->
+  <div class="modal" id="addServerModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Yangi Server Qo'shish</div>
+        <button class="close-btn" id="closeModalBtn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="serverName">Server Nomi</label>
+        <input type="text" class="form-input" id="serverName" placeholder="Minecraft Server">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="serverIp">Server IP</label>
+        <input type="text" class="form-input" id="serverIp" placeholder="nurlicraft.uz">
+      </div>
+      <button class="form-btn" id="addServerBtn">Qo'shish</button>
+    </div>
+  </div>
+
+  <div class="notification" id="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notificationText">Xabar muvaffaqiyatli yuborildi</span>
+  </div>
+
+  <script>
+    // Foydalanuvchi ma'lumotlarini olish
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    if (!currentUser.email) {
+      location.href = 'login.html';
+    }
+    document.getElementById('userEmail').textContent = currentUser.email;
+    document.getElementById('userAvatar').textContent = currentUser.email.charAt(0).toUpperCase();
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('currentUser');
+      location.href = 'login.html';
+    });
+
+    // --- STATE MANAGEMENT ---
+    let servers = [
+      { id: 1, name: "Runstax Server", ip: "runstax.uz", online: true, players: { online: 0, max: 100 }, version: "1.19.4" },
+      { id: 2, name: "NurliCraft Server", ip: "nurlicraft.uz", online: true, players: { online: 0, max: 100 }, version: "1.20.1" }
+    ];
+    let currentServer = null;
+    let uptimeInterval = null;
+    let uptimeSeconds = 0;
+
+    // --- INITIALIZATION ---
+    function init() {
+      loadServers();
+      renderServerList();
+      updateAllServers();
+      setInterval(updateAllServers, 30000); // Auto-refresh every 30s
+    }
+
+    // --- DATA PERSISTENCE ---
+    function loadServers() {
+      const savedServers = localStorage.getItem('monitoredServers');
+      if (savedServers) {
+        servers = JSON.parse(savedServers);
+      }
+    }
+    function saveServers() {
+      localStorage.setItem('monitoredServers', JSON.stringify(servers));
+    }
+
+    // --- API FOR REAL SERVER DATA ---
+    async function getServerData(ip) {
+      try {
+        // Use minetools.eu API to get real server data
+        const response = await fetch(`https://api.minetools.eu/ping/${ip}/25565`);
+        const data = await response.json();
+        
+        if (data.error) {
+          // If there's an error, try another API
+          const altResponse = await fetch(`https://mcapi.us/server/status?ip=${ip}`);
+          const altData = await altResponse.json();
+          
+          if (altData.online) {
+            return {
+              online: true,
+              players: {
+                online: altData.players.now,
+                max: altData.players.max
+              },
+              version: altData.server.name || "Unknown",
+              motd: altData.motd || ""
+            };
+          } else {
+            return {
+              online: false,
+              players: { online: 0, max: 20 },
+              version: "Unknown",
+              motd: "Server offline"
+            };
+          }
+        } else {
+          return {
+            online: true,
+            players: {
+              online: data.players.online,
+              max: data.players.max
+            },
+            version: data.version || "Unknown",
+            motd: data.description || ""
+          };
+        }
+      } catch (error) {
+        console.error("Error fetching server data:", error);
+        return {
+          online: false,
+          players: { online: 0, max: 20 },
+          version: "Unknown",
+          motd: "Server offline"
+        };
+      }
+    }
+
+    async function updateServerStatus(server) {
+      // Get real server data
+      const serverData = await getServerData(server.ip);
+      
+      // Update server with real data
+      server.online = serverData.online;
+      server.players = serverData.players;
+      server.version = serverData.version;
+      server.motd = serverData.motd;
+      
+      return server;
+    }
+
+    async function updateAllServers() {
+      for (let i = 0; i < servers.length; i++) {
+        // Show loading indicator
+        const serverBox = document.querySelector(`[data-server-id="${servers[i].id}"]`);
+        if (serverBox) {
+          const playersElement = serverBox.querySelector('.server-players span');
+          if (playersElement) {
+            playersElement.innerHTML = '<span class="loading-indicator"></span>';
+          }
+        }
+        
+        servers[i] = await updateServerStatus(servers[i]);
+      }
+      saveServers();
+      renderServerList();
+      if (currentServer) {
+        renderServerPanel(currentServer);
+      }
+    }
+
+    // --- VIEW MANAGEMENT ---
+    function showView(viewId) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active');
+    }
+
+    function showServerList() {
+      if (uptimeInterval) clearInterval(uptimeInterval);
+      currentServer = null;
+      showView('serverListView');
+    }
+
+    function showServerPanel(serverId) {
+      currentServer = servers.find(s => s.id === serverId);
+      if (!currentServer) return;
+      
+      renderServerPanel(currentServer);
+      showView('serverPanelView');
+      startUptime();
+    }
+
+    // --- RENDERING ---
+    function renderServerList() {
+      const grid = document.getElementById('serversGrid');
+      grid.innerHTML = '';
+      const maxServers = 7;
+      const displayServers = servers.slice(0, maxServers);
+
+      displayServers.forEach(server => {
+        const box = document.createElement('div');
+        box.className = `server-box ${server.online ? 'online' : 'offline'}`;
+        box.dataset.serverId = server.id;
+        box.innerHTML = `
+          <button class="delete-server-btn" data-server-id="${server.id}"><i class="fas fa-trash"></i></button>
+          <div class="server-header">
+            <div class="server-name">${server.name}</div>
+            <div class="server-status">
+              <div class="status-indicator ${server.online ? 'online' : ''}"></div>
+              <span>${server.online ? 'Online' : 'Offline'}</span>
+            </div>
+          </div>
+          <div class="server-ip">${server.ip}</div>
+          <div class="server-players">
+            <i class="fas fa-users player-icon"></i>
+            <span>${server.players.online}/${server.players.max}</span>
+          </div>
+        `;
+        box.addEventListener('click', (e) => {
+          if (!e.target.closest('.delete-server-btn')) {
+            showServerPanel(server.id);
+          }
+        });
+        grid.appendChild(box);
+      });
+
+      if (servers.length < maxServers) {
+        const addBtn = document.createElement('div');
+        addBtn.className = 'add-server-btn';
+        addBtn.innerHTML = `<i class="fas fa-plus-circle"></i><span>Yangi Server Qo'shish</span>`;
+        addBtn.addEventListener('click', () => document.getElementById('addServerModal').classList.add('active'));
+        grid.appendChild(addBtn);
+      }
+      
+      // Attach delete listeners
+      document.querySelectorAll('.delete-server-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          deleteServer(parseInt(btn.dataset.serverId));
+        });
+      });
+    }
+
+    function renderServerPanel(server) {
+      document.getElementById('panelServerName').textContent = server.name;
+      document.getElementById('panelServerIP').textContent = server.ip;
+      document.getElementById('panelServerPlayers').textContent = `${server.players.online}/${server.players.max}`;
+      document.getElementById('panelServerVersion').textContent = server.version;
+      
+      const indicator = document.getElementById('panelStatusIndicator');
+      const statusText = document.getElementById('panelStatusText');
+      if (server.online) {
+        indicator.classList.add('online');
+        statusText.textContent = 'Online';
+      } else {
+        indicator.classList.remove('online');
+        statusText.textContent = 'Offline';
+      }
+      
+      renderPlayersList(server.players.online);
+    }
+    
+    function renderPlayersList(count) {
+      const list = document.getElementById('panelPlayersList');
+      list.innerHTML = '';
+      if (count === 0) {
+        list.innerHTML = '<p style="opacity: 0.7;">Hozircha hech kim online emas.</p>';
+        return;
+      }
+      
+      // Add a message about real player count
+      const message = document.createElement('p');
+      message.style.marginBottom = '15px';
+      message.textContent = `Serverda ${count} ta o'yinchi bor (ma'lumotlar real vaqt rejimida yangilanadi)`;
+      list.appendChild(message);
+      
+      // Create placeholder player cards
+      for (let i = 0; i < Math.min(count, 20); i++) {
+        const card = document.createElement('div');
+        card.className = 'player-card';
+        card.innerHTML = `
+          <div class="player-avatar"><i class="fas fa-user"></i></div>
+          <div class="player-info">
+            <div class="player-name">Player_${i + 1}</div>
+            <div class="player-status">Online</div>
+          </div>
+        `;
+        list.appendChild(card);
+      }
+      
+      if (count > 20) {
+        const morePlayers = document.createElement('p');
+        morePlayers.style.marginTop = '15px';
+        morePlayers.textContent = `Va yana ${count - 20} ta o'yinchi...`;
+        list.appendChild(morePlayers);
+      }
+    }
+
+    // --- PANEL FUNCTIONALITY ---
+    function startUptime() {
+      if (uptimeInterval) clearInterval(uptimeInterval);
+      uptimeSeconds = 0;
+      uptimeInterval = setInterval(() => {
+        uptimeSeconds++;
+        const h = Math.floor(uptimeSeconds / 3600).toString().padStart(2, '0');
+        const m = Math.floor((uptimeSeconds % 3600) / 60).toString().padStart(2, '0');
+        const s = (uptimeSeconds % 60).toString().padStart(2, '0');
+        document.getElementById('panelServerUptime').textContent = `${h}:${m}:${s}`;
+      }, 1000);
+    }
+    
+    function addConsoleLine(message) {
+      const consoleContainer = document.getElementById('panelConsoleContainer');
+      const time = new Date().toTimeString().slice(0, 8);
+      const line = document.createElement('div');
+      line.className = 'console-line';
+      line.innerHTML = `<span class="console-time">[${time}]</span> <span>${message}</span>`;
+      consoleContainer.appendChild(line);
+      consoleContainer.scrollTop = consoleContainer.scrollHeight;
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('backToServersBtn').addEventListener('click', showServerList);
+    document.getElementById('refreshAllBtn').addEventListener('click', () => {
+      showNotification('Barcha serverlar yangilanmoqda...', 'info');
+      updateAllServers();
+    });
+
+    // Panel Controls
+    document.getElementById('panelStartBtn').addEventListener('click', () => {
+      if (currentServer && !currentServer.online) {
+        showNotification(`${currentServer.name} is starting...`, 'info');
+        addConsoleLine(`> Starting server...`);
+        setTimeout(() => {
+          currentServer.online = true;
+          renderServerPanel(currentServer);
+          addConsoleLine(`Server started successfully!`);
+          showNotification(`${currentServer.name} started!`, 'success');
+        }, 2000);
+      }
+    });
+    document.getElementById('panelStopBtn').addEventListener('click', () => {
+      if (currentServer && currentServer.online) {
+        showNotification(`${currentServer.name} is stopping...`, 'info');
+        addConsoleLine(`> Stopping server...`);
+        setTimeout(() => {
+          currentServer.online = false;
+          renderServerPanel(currentServer);
+          addConsoleLine(`Server stopped.`);
+          showNotification(`${currentServer.name} stopped.`, 'success');
+        }, 1500);
+      }
+    });
+    document.getElementById('panelRestartBtn').addEventListener('click', () => {
+      if (currentServer) {
+        showNotification(`${currentServer.name} is restarting...`, 'info');
+        addConsoleLine(`> Restarting server...`);
+        setTimeout(() => {
+          addConsoleLine(`Server restarted successfully!`);
+          showNotification(`${currentServer.name} restarted!`, 'success');
+        }, 2500);
+      }
+    });
+
+    // Tabs
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tabName = btn.dataset.tab;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.tab-content').forEach(content => {
+          content.classList.remove('active');
+        });
+        document.getElementById(tabName).classList.add('active');
+      });
+    });
+
+    // Console
+    document.getElementById('panelSendCommandBtn').addEventListener('click', () => {
+      const input = document.getElementById('panelConsoleInput');
+      const command = input.value.trim();
+      if (command) {
+        addConsoleLine(`> ${command}`);
+        setTimeout(() => {
+          if (command === 'list') {
+            addConsoleLine(`There are ${currentServer.players.online} of a max of ${currentServer.players.max} players online.`);
+          } else {
+            addConsoleLine(`Unknown command: ${command}`);
+          }
+        }, 500);
+        input.value = '';
+      }
+    });
+    document.getElementById('panelConsoleInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') document.getElementById('panelSendCommandBtn').click();
+    });
+
+    // Modal
+    document.getElementById('closeModalBtn').addEventListener('click', () => {
+      document.getElementById('addServerModal').classList.remove('active');
+    });
+    document.getElementById('addServerBtn').addEventListener('click', async () => {
+      const name = document.getElementById('serverName').value.trim();
+      const ip = document.getElementById('serverIp').value.trim();
+      if (!name || !ip) {
+        showNotification('Iltimos, barcha maydonlarni to\'ldiring.', 'error');
+        return;
+      }
+      const newServer = { id: Date.now(), name, ip, online: false, players: { online: 0, max: 20 } };
+      await updateServerStatus(newServer);
+      servers.push(newServer);
+      saveServers();
+      renderServerList();
+      document.getElementById('addServerModal').classList.remove('active');
+      document.getElementById('serverName').value = '';
+      document.getElementById('serverIp').value = '';
+      showNotification(`Server "${name}" muvaffaqiyatli qo'shildi!`, 'success');
+    });
+
+    // --- HELPERS ---
+    function deleteServer(serverId) {
+      const server = servers.find(s => s.id === serverId);
+      if (server && confirm(`"${server.name}" serverini o'chirmoqchimisiz?`)) {
+        servers = servers.filter(s => s.id !== serverId);
+        saveServers();
+        renderServerList();
+        showNotification(`Server "${server.name}" o'chirildi.`, 'success');
+      }
+    }
+
+    function showNotification(message, type = 'info') {
+      const notification = document.getElementById('notification');
+      const notificationText = document.getElementById('notificationText');
+      const icon = notification.querySelector('i');
+      
+      notification.className = `notification ${type}`;
+      notificationText.textContent = message;
+      icon.className = type === 'success' ? 'fas fa-check-circle' : 
+                      type === 'error' ? 'fas fa-exclamation-circle' : 
+                      'fas fa-info-circle';
+      
+      notification.classList.add('show');
+      setTimeout(() => notification.classList.remove('show'), 3000);
+    }
+
+    // --- START APP ---
+    init();
+  </script>
+</body>
+</html>
